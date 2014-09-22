@@ -3,14 +3,14 @@ Copyright © Hybris95
 Contact : hybris_95@hotmail.com
  ** Usage Method :
  ** copy/paste the entire script into the Firefox/Chrome Console (Ctrl+Shift+C Shortcut)
- ** For Firefox users :
+ ** For Firefox users (if you want notice sound) :
  ** about:config -> security.mixed_content.block_active_content = false
 */
 
 /**
  * Global Vars
  */
-var debug = true;
+var debug = false;
 
 /**
  * ADVANCE EVENT :
@@ -138,13 +138,14 @@ function doubleClick(){
     }
     setTimeout(function(){wootClicks = 0}, 800);
 }
-$("#woot").bind('click', doubleClick);
 function startAutoNotice(){
     autoNotice = true;
+	$("#chat-sound-button").css("background-color", "#00FF00");
     refreshAPIStatus();
 }
 function stopAutoNotice(){
     autoNotice = false;
+	$("#chat-sound-button").css("background-color", "#FF0000");
     refreshAPIStatus();
 }
 function switchAutoNotice(){
@@ -157,8 +158,6 @@ function switchAutoNotice(){
 		startAutoNotice();
 	}
 }
-startAutoNotice();
-$("#chat-sound-button").bind('click', switchAutoNotice);
 function startAutoNoticeJoinersLeavers(){
     autoJoinNotice = true;
     autoLeaveNotice = true;
@@ -169,4 +168,9 @@ function stopAutoNoticeJoinersLeavers(){
     autoLeaveNotice = false;
     refreshAPIStatus();
 }
+$("#woot").unbind('click.hybris');
+$("#woot").bind('click.hybris', doubleClick);
+startAutoNotice();
+$("#chat-sound-button").unbind('click.hybris');
+$("#chat-sound-button").bind('click.hybris', switchAutoNotice);
 startAutoNoticeJoinersLeavers();
