@@ -43,7 +43,11 @@ function randNumber(min, max){
     return Math.random() * (max - min) + min;
 }
 function iWonRaffle(){
-    
+    if(debug)
+    {
+        console.log("Won Raffle victory message");
+    }
+    // TODO - Make a word about winning the raffle like "haha I won" etc.. and randomize it
 }
 function respondRaffle(){
     if(debug)
@@ -51,7 +55,8 @@ function respondRaffle(){
         console.log("Autoraffle");
     }
     API.sendChat("!raffle");
-    // TODO - Make a word about winning the raffle like "haha I won" etc.. and randomize it
+    var timeOut = randNumber(5000, 10000);
+    setTimeout(iWonRaffle, timeOut);
 }
 function analyseChat(chat){
     var message = chat.message;
