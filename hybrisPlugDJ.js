@@ -24,6 +24,24 @@ function autowoot(){
 }
 
 /**
+ * JOIN EVENT :
+ * AutoJoinNotice
+ */
+var autoJoinNotice = false;
+
+function someoneJoined(user){
+    API.chatLog(user.username + " joined the room", true);
+}
+/**
+ * LEAVE EVENT :
+ * AutoLeaveNotice
+ */
+var autoLeaveNotice = false;
+
+function someoneLeft(user){
+    API.chatLog(user.username + " left the room", false);
+}
+/**
  * CHAT EVENT :
  * AutoNotice - http://pastebin.com/BVDgf6W0 -> http://pastebin.com/Hsi2YMDH
  * AutoAnswer (Just a Chill room)
@@ -166,6 +184,8 @@ function refreshAPIStatus()
 {
     API.off(API.ADVANCE);
     API.off(API.CHAT);
+    API.off(API.USER_JOIN);
+    API.off(API.USER_LEAVE);
     if(autoW)
     {
         API.on(API.ADVANCE, autowoot);
@@ -173,6 +193,14 @@ function refreshAPIStatus()
     if(autoAnswer || autoRaffle || autoNotice)
     {
         API.on(API.CHAT, analyseChat);
+    }
+    if(autoJoinNotice)
+    {
+        API.on(API.USER_JOIN, someoneJoined);
+    }
+    if(autoLeaveNotice)
+    {
+        API.on(API.USER_LEAVE, someoneLeft);
     }
 }
 function startAutoWoot(){
@@ -208,7 +236,16 @@ function stopAutoRaffle(){
     autoRaffle = false;
     refreshAPIStatus();
 }
+function startAutoNoticeJoinersLeavers(){
+    autoJoinNotice = true;
+    autoLeaveNotice = true;
+    refreshAPIStatus();
+}
+function stopAutoNoticeJoinersLeavers(){
+    autoJoinNotice = false;
+    autoLeaveNotice = false;
+    refreshAPIStatus();
+}
 startAutoWoot();
 startAutoNotice();
-startAutoAnswer();
-startAutoRaffle();
+startAutoNoticeJoinersLeavers();
