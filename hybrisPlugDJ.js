@@ -41,15 +41,15 @@ var AFK_MESSAGE_TWO = ", you will be removed soon if you don't respond";
 var AFK_ANSWERS = ["@ChillBot Im not", "@ChillBot Im around", "Im not", "Im around"];
 
 var RAFFLE_MESSAGE = "Congratulations, @.* has won the raffle! Type !raffle to get boosted to spot";
-var RAFFLE_ANSWERS = ["Wooohooo raffle is for me!", "I guess I won :)", "Thanks!", "Raffle!!"];
-var RAFFLE_LET_SOMEONE_ELSE_ANSWERS = ["@ChillBot I guess someone else can raffle on this ;)", "@ChillBot I pass my turn on this raffle", "@ChillBot Thanks but no thanks", "I guess someone else can raffle on this ;)", "I pass my turn on this raffle", "Thanks but no thanks"];
+var RAFFLE_POSITIVE_ANSWERS = [":)", "I guess I won :)", "Thanks!", "Raffle!!", ":D", "@ChillBot I <3 you"];
+var RAFFLE_NEGATIVE_ANSWERS = ["@ChillBot I guess someone else can raffle on this ;)", "@ChillBot I pass my turn on this raffle", "@ChillBot Thanks but no thanks", "I guess someone else can raffle on this ;)", "I pass my turn on this raffle", "Thanks but no thanks"];
 
 function randNumber(min, max){
     return Math.floor(Math.random() * (max - min) + min);
 }
 function iWonRaffle(){
-    var randAnswer = randNumber(0, RAFFLE_ANSWERS.length - 1);
-    var answer = RAFFLE_ANSWERS[randAnswer];
+    var randAnswer = randNumber(0, RAFFLE_POSITIVE_ANSWERS.length - 1);
+    var answer = RAFFLE_POSITIVE_ANSWERS[randAnswer];
     API.sendChat(answer);
     if(debug)
     {
@@ -60,8 +60,8 @@ function iWonRaffle(){
 function respondRaffle(){
     if(API.getWaitListPosition() < 10)
     {
-        var randAnswer = randNumber(0, RAFFLE_LET_SOMEONE_ELSE_ANSWERS.length - 1);
-        var answer = RAFFLE_LET_SOMEONE_ELSE_ANSWERS[randAnswer];
+        var randAnswer = randNumber(0, RAFFLE_NEGATIVE_ANSWERS.length - 1);
+        var answer = RAFFLE_NEGATIVE_ANSWERS[randAnswer];
         API.sendChat(answer);
         if(debug)
         {
