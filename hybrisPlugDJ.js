@@ -1,7 +1,7 @@
 /**
 Copyright © Hybris95
 Contact : hybris_95@hotmail.com
-Distributed on : http://pastebin.com/Sg8eCDEH
+Distributed on : http://pastebin.com/T6RSqJdq
  ** Usage Method :
  ** copy/paste the entire script into the Firefox/Chrome Console (Ctrl+Shift+C Shortcut)
  ** For Firefox users (if you want notice sound) :
@@ -15,7 +15,7 @@ var debug = false;
 
 /**
  * ADVANCE EVENT :
- * AutoWoot - http://pastebin.com/qNV6T6pq
+ * AutoWoot Only -> http://pastebin.com/qNV6T6pq
  */
 var autoW = false;
 function autowoot(){
@@ -45,7 +45,7 @@ function someoneLeft(user){
 }
 /**
  * CHAT EVENT :
- * AutoNotice - http://pastebin.com/Hsi2YMDH
+ * AutoNotice Only -> http://pastebin.com/Hsi2YMDH
  */
 var autoNotice = false;
 
