@@ -237,19 +237,22 @@ function doubleClick(){
 }
 $("#woot").bind('click', doubleClick);
 function startAutoNotice(){
-    if(debug)console.log("startAutoNotice");
     autoNotice = true;
     refreshAPIStatus();
 }
 function stopAutoNotice(){
-    if(debug)console.log("stopAutoNotice");
     autoNotice = false;
     refreshAPIStatus();
 }
 function switchAutoNotice(){
-    autoNotice = !autoNotice;// TODO - DEBUG
-    if(debug)console.log("switched to " + autoNotice);
-    refreshAPIStatus();
+	if(autoNotice)
+	{
+		stopAutoNotice();
+	}
+	else
+	{
+		startAutoNotice();
+	}
 }
 startAutoNotice();
 $("#chat-sound-button").bind('click', switchAutoNotice);
