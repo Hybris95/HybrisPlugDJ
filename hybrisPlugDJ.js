@@ -34,6 +34,7 @@ var autoAnswer = false;
 var autoRaffle = false;
 
 var ownUserName = API.getUser().username;
+var lastTimeStamp = false;
 var loadedSound = new Audio(decodeURIComponent("https://gmflowplayer.googlecode.com/files/notify.ogg"));
 
 var AFK_MESSAGE_ONE = "you have been AFK for .+m, please respond within 2 minutes or you will be removed";
@@ -98,11 +99,18 @@ function analyseChat(chat){
     var cid = chat.cid;
     var timestamp = chat.timestamp;
     
+    // Recover the latest timestamp for the user
+    if(username == ownUserName)
+    {
+        lastTimeStamp = timestamp;
+    }
+    
+    // Watch PMs
     if(message.match("@" + ownUserName))
     {
         if(debug)
         {
-            API.chatLog("Received a PM from " + username);
+            console.log(username + " told me : " + message);
         }
         // AutoNotice
         if(autoNotice)
