@@ -168,7 +168,8 @@ function stopAutoNoticeJoinersLeavers(){
 }
 $("#woot").unbind('click.hybris');
 $("#woot").bind('click.hybris', doubleClick);
-startAutoNotice();
+$("#woot")[0].children[0].children[1].innerHTML = "x2Click";
 $("#chat-sound-button").unbind('click.hybris');
 $("#chat-sound-button").bind('click.hybris', switchAutoNotice);
+startAutoNotice();
 startAutoNoticeJoinersLeavers();
