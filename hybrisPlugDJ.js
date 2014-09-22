@@ -20,6 +20,7 @@ var autoW = false;
 function autowoot(){
     if(autoW){
         $("#woot").click();
+        $("#woot.selected").css("background-color", "#10AD2F");
     }
 }
 
@@ -179,6 +180,9 @@ function analyseChat(chat){
 
 /**
  * Events Management and default status configuration
+ #woot .bottom, #woot.selected {
+    background: none repeat scroll 0% 0% #10AD2F;
+}
  */
 function refreshAPIStatus()
 {
@@ -210,16 +214,45 @@ function startAutoWoot(){
 }
 function stopAutoWoot(){
     autoW = false;
+    $("#woot.selected").css("background-color", "#90AD2F");
     refreshAPIStatus();
 }
+var wootClicks = 0;
+function doubleClick(){
+    wootClicks++;
+    if(debug)console.log(wootClicks);
+    if(wootClicks == 2)
+    {
+        wootClicks = 0;
+        if(autoW)
+        {
+            stopAutoWoot();
+        }
+        else
+        {
+            startAutoWoot();
+        }
+    }
+    setTimeout(function(){wootClicks = 0}, 800);
+}
+$("#woot").bind('click', doubleClick);
 function startAutoNotice(){
+    if(debug)console.log("startAutoNotice");
     autoNotice = true;
     refreshAPIStatus();
 }
 function stopAutoNotice(){
+    if(debug)console.log("stopAutoNotice");
     autoNotice = false;
     refreshAPIStatus();
 }
+function switchAutoNotice(){
+    autoNotice = !autoNotice;// TODO - DEBUG
+    if(debug)console.log("switched to " + autoNotice);
+    refreshAPIStatus();
+}
+startAutoNotice();
+$("#chat-sound-button").bind('click', switchAutoNotice);
 function startAutoAnswer(){
     autoAnswer = true;
     refreshAPIStatus();
@@ -246,6 +279,4 @@ function stopAutoNoticeJoinersLeavers(){
     autoLeaveNotice = false;
     refreshAPIStatus();
 }
-startAutoWoot();
-startAutoNotice();
 startAutoNoticeJoinersLeavers();
