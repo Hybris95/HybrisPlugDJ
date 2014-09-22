@@ -1,14 +1,14 @@
 /**
 Copyright © Hybris95
 Contact : hybris_95@hotmail.com
+ ** Usage Method :
+ ** copy/paste the entire script into the Firefox/Chrome Console (Ctrl+Shift+C Shortcut)
+ ** For Firefox users :
+ ** about:config -> security.mixed_content.block_active_content = false
 */
 
 /**
  * Global Vars
- ** Usage Method :
- ** copy/paste the entire script into the Firefox/Chrome Console
- ** For Firefox users :
- ** about:config -> security.mixed_content.block_active_content = false
  */
 var debug = true;
 
