@@ -35,28 +35,60 @@ var autoRaffle = false;
 
 var ownUserName = API.getUser().username;
 var loadedSound = new Audio(decodeURIComponent("https://gmflowplayer.googlecode.com/files/notify.ogg"));
+
 var AFK_MESSAGE_ONE = "you have been AFK for .+m, please respond within 2 minutes or you will be removed";
 var AFK_MESSAGE_TWO = ", you will be removed soon if you don't respond";
+var AFK_ANSWERS = ["@ChillBot Im not", "@ChillBot Im around", "Im not", "Im around"];
+
 var RAFFLE_MESSAGE = "Congratulations, @.* has won the raffle! Type !raffle to get boosted to spot";
+var RAFFLE_ANSWERS = ["Wooohooo raffle is for me!", "I guess I won :)", "Thanks!", "Raffle!!"];
+var RAFFLE_LET_SOMEONE_ELSE_ANSWERS = ["@ChillBot I guess someone else can raffle on this ;)", "@ChillBot I pass my turn on this raffle", "@ChillBot Thanks but no thanks", "I guess someone else can raffle on this ;)", "I pass my turn on this raffle", "Thanks but no thanks"];
 
 function randNumber(min, max){
-    return Math.random() * (max - min) + min;
+    return Math.floor(Math.random() * (max - min) + min);
 }
 function iWonRaffle(){
+    var randAnswer = randNumber(0, RAFFLE_ANSWERS.length - 1);
+    var answer = RAFFLE_ANSWERS[randAnswer];
+    API.sendChat(answer);
     if(debug)
     {
-        console.log("Won Raffle victory message");
+        console.log("Won Raffle victory message : " + answer);
+        console.log(randAnswer + "th answer");
     }
-    // TODO - Make a word about winning the raffle like "haha I won" etc.. and randomize it
 }
 function respondRaffle(){
+    if(API.getWaitListPosition() < 10)
+    {
+        var randAnswer = randNumber(0, RAFFLE_LET_SOMEONE_ELSE_ANSWERS.length - 1);
+        var answer = RAFFLE_LET_SOMEONE_ELSE_ANSWERS[randAnswer];
+        API.sendChat(answer);
+        if(debug)
+        {
+            console.log("Won raffle but passing the turn message : " + answer);
+            console.log(randAnswer + "th answer");
+        }
+    }
+    else
+    {
+        API.sendChat("!raffle");
+        var timeOut = randNumber(10000, 15000);
+        setTimeout(iWonRaffle, timeOut);
+        if(debug)
+        {
+            console.log("Autoraffle done, answer given in " + timeOut + "ms");
+        }
+    }
+}
+function imNotAfk(){
+    var randAnswer = randNumber(0, AFK_ANSWERS.length - 1);
+    var answer = AFK_ANSWERS[randAnswer];
+    API.sendChat(answer);
     if(debug)
     {
-        console.log("Autoraffle");
+        console.log("Answered as if not afk : " + answer);
+        console.log(randAnswer + "th answer");
     }
-    API.sendChat("!raffle");
-    var timeOut = randNumber(5000, 10000);
-    setTimeout(iWonRaffle, timeOut);
 }
 function analyseChat(chat){
     var message = chat.message;
@@ -84,18 +116,20 @@ function analyseChat(chat){
             {
                 if(message.match(AFK_MESSAGE_ONE))
                 {
-                    // TODO - AutoAnswer like 5/10 seconds later with a random message
+                    var timeOut = randNumber(10000, 15000);
+                    setTimeout(imNotAfk, timeOut);
                     if(debug)
                     {
-                        console.log("Should autoanswer here : " + message);
+                        console.log("Autoanswer asked in " + timeOut + "ms");
                     }
                 }
                 else if(message.match(AFK_MESSAGE_TWO))
                 {
-                    // TODO - AutoAnswer like 5/10 seconds later with a random message
+                    var timeOut = randNumber(10000, 15000);
+                    setTimeout(imNotAfk, timeOut);
                     if(debug)
                     {
-                        console.log("Should autoanswer here : " + message);
+                        console.log("Autoanswer asked in " + timeOut + "ms");
                     }
                 }
             }
@@ -105,11 +139,11 @@ function analyseChat(chat){
             {
                 if(message.match(RAFFLE_MESSAGE))
                 {
-                    var timeOut = randNumber(5000, 15000);
+                    var timeOut = randNumber(10000, 15000);
                     setTimeout(respondRaffle, timeOut);
                     if(debug)
                     {
-                        console.log("Autoraffle asked in " + timeOut);
+                        console.log("Autoraffle asked in " + timeOut + "ms");
                     }
                 }
             }
