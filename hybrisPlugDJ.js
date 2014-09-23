@@ -21,23 +21,22 @@ var ownUserName = API.getUser().username;
 var lastTimeStamp = false;
 var loadedSound = new Audio(decodeURIComponent("https://gmflowplayer.googlecode.com/files/notify.ogg"));
 
+var autoW = false;
+var autoNotice = false;
+var autoJoinLeaveNotice = false;
 /**
  * ADVANCE EVENT :
  * AutoWoot Only -> http://pastebin.com/qNV6T6pq
  */
-var autoW = false;
 function autowoot(){
     if(autoW){
         $("#woot").click();
     }
 }
-
 /**
  * JOIN EVENT :
  * AutoJoinNotice
  */
-var autoJoinNotice = false;
-
 function someoneJoined(user){
     API.chatLog(user.username + " joined the room", true);
 }
@@ -45,8 +44,6 @@ function someoneJoined(user){
  * LEAVE EVENT :
  * AutoLeaveNotice
  */
-var autoLeaveNotice = false;
-
 function someoneLeft(user){
     API.chatLog(user.username + " left the room", false);
 }
@@ -54,8 +51,6 @@ function someoneLeft(user){
  * CHAT EVENT :
  * AutoNotice Only -> http://pastebin.com/Hsi2YMDH
  */
-var autoNotice = false;
-
 function analyseChat(chat){
     var message = chat.message;
     var username = chat.un;
@@ -79,7 +74,6 @@ function analyseChat(chat){
         }
     }
 }
-
 /**
  * Events Management and default status configuration
  */
@@ -95,10 +89,10 @@ function refreshAPIStatus()
     if(autoNotice){
         API.on(API.CHAT, analyseChat);
     }
-    if(autoJoinNotice){
+    if(autoJoinLeaveNotice){
         API.on(API.USER_JOIN, someoneJoined);
     }
-    if(autoLeaveNotice){
+    if(autoJoinLeaveNotice){
         API.on(API.USER_LEAVE, someoneLeft);
     }
 }
@@ -138,25 +132,24 @@ function switchAutoNotice(){
 	}
 }
 function startAutoNoticeJoinersLeavers(){
-    autoJoinNotice = true;
-    autoLeaveNotice = true;
+    autoJoinLeaveNotice = true;
     $("#hybrisJoiners").css("background-color", "#105D2F");
     refreshAPIStatus();
 }
 function stopAutoNoticeJoinersLeavers(){
-    autoJoinNotice = false;
-    autoLeaveNotice = false;
+    autoJoinLeaveNotice = false;
     $("#hybrisJoiners").css("background-color", "#5D102F");
     refreshAPIStatus();
 }
 function switchAutoNoticeJoinersLeavers(){
-    if(autoJoinNotice){
+    if(autoJoinLeaveNotice){
         stopAutoNoticeJoinersLeavers();
     }else{
         startAutoNoticeJoinersLeavers();
     }
 }
 function main(){
+    // PlugCubed compatibility - has to be loaded BEFORE PlugCubed
     $("#chat-messages").css("height", "685px");// This resizes the messages area to make place for Hybris Toolbar
     $("#chat-input").css("bottom", "46px");// This makes the ChatInput go a lil more up to make place for Hybris Toolbar
     if($("#hybrisHeader").length == 0){
@@ -166,6 +159,7 @@ function main(){
     $("#hybrisHeader").css("height", "46px");
     $("#hybrisHeader").css("bottom", "0px");
     $("#hybrisHeader").css("left", "10px");
+    $("#hybrisHeader").css("width", "100%");
     
     if($("#hybrisAutoWoot").length == 0){
         $("#hybrisHeader").append("<div id=\"hybrisAutoWoot\" class=\"chat-header-button\"><i class=\"icon icon-hybris-autowoot\"></i></div>");
@@ -192,6 +186,6 @@ function main(){
     $(".icon-hybris-joiners").css("background-position", "-245px 0px");
     $("#hybrisJoiners").unbind('clic.hybris');
     $("#hybrisJoiners").bind('click.hybris', switchAutoNoticeJoinersLeavers);
-    startAutoNoticeJoinersLeavers();
+    stopAutoNoticeJoinersLeavers();
 }
 $(document).ready(main);
