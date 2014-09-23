@@ -27,16 +27,13 @@ var loadedSound = new Audio(decodeURIComponent("https://gmflowplayer.googlecode.
  */
 var autoW = false;
 function autowoot(advance){
-    $("#woot").css("background-color", "");
     if(autoW){
         if(advance){
             if(advance.dj.username != ownUserName){
                 $("#woot").click();
-                $("#woot").css("background-color", "#10AD2F");
             }
         }else{
             $("#woot").click();
-            $("#woot").css("background-color", "#10AD2F");
         }
     }
 }
@@ -113,37 +110,30 @@ function refreshAPIStatus()
 }
 function startAutoWoot(){
     autoW = true;
+    $("#hybrisAutoWoot").css("background-color", "#105D2F");
     autowoot();
     refreshAPIStatus();
 }
 function stopAutoWoot(){
     autoW = false;
-    $("#woot").css("background-color", "");
+    $("#hybrisAutoWoot").css("background-color", "#5D102F");
     refreshAPIStatus();
 }
-var wootClicks = 0;
-function doubleClick(){
-    wootClicks++;
-    if(debug)console.log(wootClicks);
-    if(wootClicks == 2)
-    {
-        wootClicks = 0;
-        if(autoW){
-            stopAutoWoot();
-        }else{
-            startAutoWoot();
-        }
+function switchAutoWoot(){
+    if(autoW){
+        stopAutoWoot();
+    }else{
+        startAutoWoot();
     }
-    setTimeout(function(){wootClicks = 0}, 800);
 }
 function startAutoNotice(){
     autoNotice = true;
-	$("#chat-sound-button").css("background-color", "#105D2F");
+	$("#hybrisMention").css("background-color", "#105D2F");
     refreshAPIStatus();
 }
 function stopAutoNotice(){
     autoNotice = false;
-	$("#chat-sound-button").css("background-color", "#5D102F");
+	$("#hybrisMention").css("background-color", "#5D102F");
     refreshAPIStatus();
 }
 function switchAutoNotice(){
@@ -173,20 +163,39 @@ function switchAutoNoticeJoinersLeavers(){
     }
 }
 function main(){
-    $("#woot").unbind('click.hybris');
-    $("#woot").bind('click.hybris', doubleClick);
-    $("#woot")[0].children[0].children[1].innerHTML = "x2Click";
+    $("#chat-messages").css("height", "685px");// This resizes the messages area to make place for Hybris Toolbar
+    $("#chat-input").css("bottom", "46px");// This makes the ChatInput go a lil more up to make place for Hybris Toolbar
+    if($("#hybrisHeader").length == 0){
+        $("#chat").append("<div id=\"hybrisHeader\"><div class=\"divider\" /></div>");
+    }
+    $("#hybrisHeader").css("position", "absolute");
+    $("#hybrisHeader").css("height", "46px");
+    $("#hybrisHeader").css("bottom", "0px");
+    $("#hybrisHeader").css("left", "10px");
+    
+    if($("#hybrisAutoWoot").length == 0){
+        $("#hybrisHeader").append("<div id=\"hybrisAutoWoot\" class=\"chat-header-button\"><i class=\"icon icon-hybris-autowoot\"></i></div>");
+    }
+    $(".icon-hybris-autowoot").css("background", "url('https://cdn.plug.dj/_/static/images/icons.5f9a8e66-2aff-4176-96b8-7859f92becfc.png')");
+    $(".icon-hybris-autowoot").css("background-position", "-105px -280px");
+    $("#hybrisAutoWoot").unbind('click.hybris');
+    $("#hybrisAutoWoot").bind('click.hybris', switchAutoWoot);
     stopAutoWoot();
     
-    $("#chat-sound-button").unbind('click.hybris');
-    $("#chat-sound-button").bind('click.hybris', switchAutoNotice);
+    if($("#hybrisMention").length == 0){
+        $("#hybrisHeader").append("<div id=\"hybrisMention\" class=\"chat-header-button\"><i class=\"icon icon-hybris-mention\"></i></div>");
+    }
+    $(".icon-hybris-mention").css("background", "url('https://cdn.plug.dj/_/static/images/icons.5f9a8e66-2aff-4176-96b8-7859f92becfc.png')");
+    $(".icon-hybris-mention").css("background-position", "-140px 0px");
+    $("#hybrisMention").unbind('click.hybris');
+    $("#hybrisMention").bind('click.hybris', switchAutoNotice);
     startAutoNotice();
     
     if($("#hybrisJoiners").length == 0){
-        $("#chat-header").append("<div id=\"hybrisJoiners\" class=\"chat-header-button\"><i class=\"icon icon-chat-joiners\"></i></div>");
-        
+        $("#hybrisHeader").append("<div id=\"hybrisJoiners\" class=\"chat-header-button\"><i class=\"icon icon-hybris-joiners\"></i></div>");
     }
-    $(".icon-chat-joiners").css("background", "url('https://cdn.plug.dj/_/static/images/icons.5f9a8e66-2aff-4176-96b8-7859f92becfc.png')");
+    $(".icon-hybris-joiners").css("background", "url('https://cdn.plug.dj/_/static/images/icons.5f9a8e66-2aff-4176-96b8-7859f92becfc.png')");
+    $(".icon-hybris-joiners").css("background-position", "-245px 0px");
     $("#hybrisJoiners").unbind('clic.hybris');
     $("#hybrisJoiners").bind('click.hybris', switchAutoNoticeJoinersLeavers);
     startAutoNoticeJoinersLeavers();
