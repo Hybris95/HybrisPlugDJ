@@ -1,8 +1,12 @@
 /**
 Copyright © Hybris95
 Contact : hybris_95@hotmail.com
+Firefox:
 Add the following line as a bookmark :
 javascript:(function(){$.getScript('https://raw.githubusercontent.com/Hybris95/HybrisPlugDJ/master/hybrisPlugDJ.js');}());
+Chrome:
+Add the following line as a bookmark :
+javascript:(function(){$.getScript('https://rawgit.com/Hybris95/HybrisPlugDJ/master/hybrisPlugDJ.js');}());
  ** Usage Method :
  ** copy/paste the entire script into the Firefox/Chrome Console (Ctrl+Shift+C Shortcut)
  ** For Firefox users (if you want notice sound) :
@@ -19,11 +23,18 @@ var debug = false;
  * AutoWoot Only -> http://pastebin.com/qNV6T6pq
  */
 var autoW = false;
-function autowoot(){
+function autowoot(advance){
     $("#woot").css("background-color", "");
     if(autoW){
-        $("#woot").click();
-        $("#woot").css("background-color", "#10AD2F");
+        if(advance){
+            if(advance.dj.username != ownUserName){
+                $("#woot").click();
+                $("#woot").css("background-color", "#10AD2F");
+            }
+        }else{
+            $("#woot").click();
+            $("#woot").css("background-color", "#10AD2F");
+        }
     }
 }
 
