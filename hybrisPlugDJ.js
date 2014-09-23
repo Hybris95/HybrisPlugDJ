@@ -17,6 +17,9 @@ javascript:(function(){$.getScript('https://rawgit.com/Hybris95/HybrisPlugDJ/mas
  * Global Vars
  */
 var debug = false;
+var ownUserName = API.getUser().username;
+var lastTimeStamp = false;
+var loadedSound = new Audio(decodeURIComponent("https://gmflowplayer.googlecode.com/files/notify.ogg"));
 
 /**
  * ADVANCE EVENT :
@@ -61,10 +64,6 @@ function someoneLeft(user){
  * AutoNotice Only -> http://pastebin.com/Hsi2YMDH
  */
 var autoNotice = false;
-
-var ownUserName = API.getUser().username;
-var lastTimeStamp = false;
-var loadedSound = new Audio(decodeURIComponent("https://gmflowplayer.googlecode.com/files/notify.ogg"));
 
 function analyseChat(chat){
     var message = chat.message;
