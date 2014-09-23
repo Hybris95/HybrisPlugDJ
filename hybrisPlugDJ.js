@@ -26,15 +26,9 @@ var loadedSound = new Audio(decodeURIComponent("https://gmflowplayer.googlecode.
  * AutoWoot Only -> http://pastebin.com/qNV6T6pq
  */
 var autoW = false;
-function autowoot(advance){
+function autowoot(){
     if(autoW){
-        if(advance){
-            if(advance.dj.username != ownUserName){
-                $("#woot").click();
-            }
-        }else{
-            $("#woot").click();
-        }
+        $("#woot").click();
     }
 }
 
