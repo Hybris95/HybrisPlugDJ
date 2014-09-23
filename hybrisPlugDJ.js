@@ -1,7 +1,7 @@
 /**
 Copyright © Hybris95
 Contact : hybris_95@hotmail.com
-Distributed on : http://pastebin.com/T6RSqJdq
+Distributed on : https://raw.githubusercontent.com/Hybris95/HybrisPlugDJ/master/hybrisPlugDJ.js
  ** Usage Method :
  ** copy/paste the entire script into the Firefox/Chrome Console (Ctrl+Shift+C Shortcut)
  ** For Firefox users (if you want notice sound) :
@@ -62,21 +62,16 @@ function analyseChat(chat){
     var timestamp = chat.timestamp;
     
     // Recover the latest timestamp for the user
-    if(username == ownUserName)
-    {
+    if(username == ownUserName){
         lastTimeStamp = timestamp;
     }
     
     // Watch PMs
     if(message.match("@" + ownUserName))
     {
-        if(debug)
-        {
-            console.log(username + " told me : " + message);
-        }
+        if(debug){console.log(username + " told me : " + message);}
         // AutoNotice
-        if(autoNotice)
-        {
+        if(autoNotice){
             loadedSound.play();
         }
     }
@@ -91,20 +86,16 @@ function refreshAPIStatus()
     API.off(API.CHAT);
     API.off(API.USER_JOIN);
     API.off(API.USER_LEAVE);
-    if(autoW)
-    {
+    if(autoW){
         API.on(API.ADVANCE, autowoot);
     }
-    if(autoNotice)
-    {
+    if(autoNotice){
         API.on(API.CHAT, analyseChat);
     }
-    if(autoJoinNotice)
-    {
+    if(autoJoinNotice){
         API.on(API.USER_JOIN, someoneJoined);
     }
-    if(autoLeaveNotice)
-    {
+    if(autoLeaveNotice){
         API.on(API.USER_LEAVE, someoneLeft);
     }
 }
@@ -125,12 +116,9 @@ function doubleClick(){
     if(wootClicks == 2)
     {
         wootClicks = 0;
-        if(autoW)
-        {
+        if(autoW){
             stopAutoWoot();
-        }
-        else
-        {
+        }else{
             startAutoWoot();
         }
     }
@@ -138,21 +126,18 @@ function doubleClick(){
 }
 function startAutoNotice(){
     autoNotice = true;
-	$("#chat-sound-button").css("background-color", "#00FF00");
+	$("#chat-sound-button").css("background-color", "#10AD2F");
     refreshAPIStatus();
 }
 function stopAutoNotice(){
     autoNotice = false;
-	$("#chat-sound-button").css("background-color", "#FF0000");
+	$("#chat-sound-button").css("background-color", "#AD102F");
     refreshAPIStatus();
 }
 function switchAutoNotice(){
-	if(autoNotice)
-	{
+	if(autoNotice){
 		stopAutoNotice();
-	}
-	else
-	{
+	}else{
 		startAutoNotice();
 	}
 }
