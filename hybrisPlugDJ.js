@@ -1,7 +1,8 @@
 /**
 Copyright © Hybris95
 Contact : hybris_95@hotmail.com
-Distributed on : https://raw.githubusercontent.com/Hybris95/HybrisPlugDJ/master/hybrisPlugDJ.js
+Add the following line as a bookmark :
+javascript:(function(){$.getScript('https://raw.githubusercontent.com/Hybris95/HybrisPlugDJ/master/hybrisPlugDJ.js');}());
  ** Usage Method :
  ** copy/paste the entire script into the Firefox/Chrome Console (Ctrl+Shift+C Shortcut)
  ** For Firefox users (if you want notice sound) :
@@ -19,9 +20,10 @@ var debug = false;
  */
 var autoW = false;
 function autowoot(){
+    $("#woot").css("background-color", "");
     if(autoW){
         $("#woot").click();
-        $("#woot.selected").css("background-color", "#10AD2F");
+        $("#woot").css("background-color", "#10AD2F");
     }
 }
 
@@ -106,7 +108,7 @@ function startAutoWoot(){
 }
 function stopAutoWoot(){
     autoW = false;
-    $("#woot.selected").css("background-color", "#90AD2F");
+    $("#woot").css("background-color", "");
     refreshAPIStatus();
 }
 var wootClicks = 0;
@@ -164,13 +166,13 @@ function main(){
     $("#woot").unbind('click.hybris');
     $("#woot").bind('click.hybris', doubleClick);
     $("#woot")[0].children[0].children[1].innerHTML = "x2Click";
+    stopAutoWoot();
     
     $("#chat-sound-button").unbind('click.hybris');
     $("#chat-sound-button").bind('click.hybris', switchAutoNotice);
     startAutoNotice();
     
-    if($("#hybrisJoiners").length == 0)
-    {
+    if($("#hybrisJoiners").length == 0){
         $("#chat-header").append("<div id=\"hybrisJoiners\" class=\"chat-header-button\"><i class=\"icon icon-chat-joiners\"></i></div>");
         
     }
