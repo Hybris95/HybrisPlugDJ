@@ -126,12 +126,12 @@ function doubleClick(){
 }
 function startAutoNotice(){
     autoNotice = true;
-	$("#chat-sound-button").css("background-color", "#10AD2F");
+	$("#chat-sound-button").css("background-color", "#105D2F");
     refreshAPIStatus();
 }
 function stopAutoNotice(){
     autoNotice = false;
-	$("#chat-sound-button").css("background-color", "#AD102F");
+	$("#chat-sound-button").css("background-color", "#5D102F");
     refreshAPIStatus();
 }
 function switchAutoNotice(){
@@ -144,17 +144,39 @@ function switchAutoNotice(){
 function startAutoNoticeJoinersLeavers(){
     autoJoinNotice = true;
     autoLeaveNotice = true;
+    $("#hybrisJoiners").css("background-color", "#105D2F");
     refreshAPIStatus();
 }
 function stopAutoNoticeJoinersLeavers(){
     autoJoinNotice = false;
     autoLeaveNotice = false;
+    $("#hybrisJoiners").css("background-color", "#5D102F");
     refreshAPIStatus();
 }
-$("#woot").unbind('click.hybris');
-$("#woot").bind('click.hybris', doubleClick);
-$("#woot")[0].children[0].children[1].innerHTML = "x2Click";
-$("#chat-sound-button").unbind('click.hybris');
-$("#chat-sound-button").bind('click.hybris', switchAutoNotice);
-startAutoNotice();
-startAutoNoticeJoinersLeavers();
+function switchAutoNoticeJoinersLeavers(){
+    if(autoJoinNotice){
+        stopAutoNoticeJoinersLeavers();
+    }else{
+        startAutoNoticeJoinersLeavers();
+    }
+}
+function main(){
+    $("#woot").unbind('click.hybris');
+    $("#woot").bind('click.hybris', doubleClick);
+    $("#woot")[0].children[0].children[1].innerHTML = "x2Click";
+    
+    $("#chat-sound-button").unbind('click.hybris');
+    $("#chat-sound-button").bind('click.hybris', switchAutoNotice);
+    startAutoNotice();
+    
+    if($("#hybrisJoiners").length == 0)
+    {
+        $("#chat-header").append("<div id=\"hybrisJoiners\" class=\"chat-header-button\"><i class=\"icon icon-chat-joiners\"></i></div>");
+        
+    }
+    $(".icon-chat-joiners").css("background", "url('https://cdn.plug.dj/_/static/images/icons.5f9a8e66-2aff-4176-96b8-7859f92becfc.png')");
+    $("#hybrisJoiners").unbind('clic.hybris');
+    $("#hybrisJoiners").bind('click.hybris', switchAutoNoticeJoinersLeavers);
+    startAutoNoticeJoinersLeavers();
+}
+$(document).ready(main);
