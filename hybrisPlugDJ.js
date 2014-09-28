@@ -148,6 +148,21 @@ function switchAutoNoticeJoinersLeavers(){
         startAutoNoticeJoinersLeavers();
     }
 }
+function hideToolTip(){
+	$("#tooltip").remove();
+}
+function showAutoWootToolTip(){
+	hideToolTip();
+	$("body").append("<div id=\"tooltip\" style=\"left: 1600px;top: 800px;\"><span>AutoWoot</span><div class=\"corner\"></div></div>");
+}
+function showAutoNoticeToolTip(){
+	hideToolTip();
+	$("body").append("<div id=\"tooltip\" style=\"left: 1650px;top: 800px;\"><span>Mention sound notification</span><div class=\"corner\"></div></div>");
+}
+function showAutoJoinersLeaversToolTip(){
+	hideToolTip();
+	$("body").append("<div id=\"tooltip\" style=\"left: 1700px;top: 800px;\"><span>Joiners/Leavers notification</span><div class=\"corner\"></div></div>");
+}
 function main(){
     // PlugCubed compatibility - has to be loaded BEFORE PlugCubed
     $("#chat-messages").css("height", "685px");// This resizes the messages area to make place for Hybris Toolbar
@@ -168,6 +183,10 @@ function main(){
     $(".icon-hybris-autowoot").css("background-position", "-105px -280px");
     $("#hybrisAutoWoot").unbind('click.hybris');
     $("#hybrisAutoWoot").bind('click.hybris', switchAutoWoot);
+	$("#hybrisAutoWoot").unbind('mouseenter.hybris');
+	$("#hybrisAutoWoot").bind('mouseenter.hybris', showAutoWootToolTip);
+	$("#hybrisAutoWoot").unbind('mouseleave.hybris');
+	$("#hybrisAutoWoot").bind('mouseleave.hybris', hideToolTip);
     stopAutoWoot();
     
     if($("#hybrisMention").length == 0){
@@ -177,6 +196,10 @@ function main(){
     $(".icon-hybris-mention").css("background-position", "-140px 0px");
     $("#hybrisMention").unbind('click.hybris');
     $("#hybrisMention").bind('click.hybris', switchAutoNotice);
+	$("#hybrisMention").unbind('mouseenter.hybris');
+	$("#hybrisMention").bind('mouseenter.hybris', showAutoNoticeToolTip);
+	$("#hybrisMention").unbind('mouseleave.hybris');
+	$("#hybrisMention").bind('mouseleave.hybris', hideToolTip);
     startAutoNotice();
     
     if($("#hybrisJoiners").length == 0){
@@ -186,6 +209,10 @@ function main(){
     $(".icon-hybris-joiners").css("background-position", "-245px 0px");
     $("#hybrisJoiners").unbind('clic.hybris');
     $("#hybrisJoiners").bind('click.hybris', switchAutoNoticeJoinersLeavers);
+	$("#hybrisJoiners").unbind('mouseenter.hybris');
+	$("#hybrisJoiners").bind('mouseenter.hybris', showAutoJoinersLeaversToolTip);
+	$("#hybrisJoiners").unbind('mouseleave.hybris');
+	$("#hybrisJoiners").bind('mouseleave.hybris', hideToolTip);
     stopAutoNoticeJoinersLeavers();
 }
 $(document).ready(main);
