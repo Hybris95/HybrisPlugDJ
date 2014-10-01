@@ -164,14 +164,32 @@ function showAutoJoinersLeaversToolTip(){
 	$("body").append("<div id=\"tooltip\" style=\"left: 1700px;top: 800px;\"><span>Joiners/Leavers notification</span><div class=\"corner\"></div></div>");
 }
 function main(){
+	var appRightHeight = $(".app-right").css("height");
+	appRightHeight = appRightHeight.substring(0, appRightHeight.length - 2);
+	appRightHeight = parseInt(appRightHeight);
+	
+	var chatHeaderHeight = $("#chat-header").css("height");
+	chatHeaderHeight = chatHeaderHeight.substring(0, chatHeaderHeight.length - 2);
+	chatHeaderHeight = parseInt(chatHeaderHeight);
+	
+	var chatInputHeight = $("#chat-input").css("height");
+	chatInputHeight = chatInputHeight.substring(0, chatInputHeight.length - 2);
+	chatInputHeight = parseInt(chatInputHeight);
+	
+	var hybrisHeaderHeight = 46;
+	var nbOfBorders = 2;
+	var sizeAboveChatInput = 10;
+	
+	var chatMessagesHeight = appRightHeight - chatHeaderHeight - chatInputHeight - hybrisHeaderHeight - nbOfBorders - sizeAboveChatInput;
+
     // PlugCubed compatibility - has to be loaded BEFORE PlugCubed
-    $("#chat-messages").css("height", "685px");// This resizes the messages area to make place for Hybris Toolbar
-    $("#chat-input").css("bottom", "46px");// This makes the ChatInput go a lil more up to make place for Hybris Toolbar
+    $("#chat-messages").css("height", chatMessagesHeight + "px");// This resizes the messages area to make place for Hybris Toolbar
+    $("#chat-input").css("bottom", hybrisHeaderHeight + "px");// This makes the ChatInput go a lil more up to make place for Hybris Toolbar
     if($("#hybrisHeader").length == 0){
         $("#chat").append("<div id=\"hybrisHeader\"><div class=\"divider\" /></div>");
     }
     $("#hybrisHeader").css("position", "absolute");
-    $("#hybrisHeader").css("height", "46px");
+    $("#hybrisHeader").css("height", hybrisHeaderHeight + "px");
     $("#hybrisHeader").css("bottom", "0px");
     $("#hybrisHeader").css("left", "10px");
     $("#hybrisHeader").css("width", "100%");
