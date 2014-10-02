@@ -79,22 +79,29 @@ function analyseChat(chat){
  */
 function refreshAPIStatus()
 {
-    API.off(API.ADVANCE);
-    API.off(API.CHAT);
-    API.off(API.USER_JOIN);
-    API.off(API.USER_LEAVE);
     if(autoW){
         API.on(API.ADVANCE, autowoot);
-    }
+    }else{
+		API.off(API.ADVANCE, autowoot);
+	}
+	
     if(autoNotice){
         API.on(API.CHAT, analyseChat);
-    }
+    }else{
+		API.off(API.CHAT, analyseChat);
+	}
+	
     if(autoJoinLeaveNotice){
         API.on(API.USER_JOIN, someoneJoined);
-    }
+    }else{
+		API.off(API.USER_JOIN, someoneJoined);
+	}
+	
     if(autoJoinLeaveNotice){
         API.on(API.USER_LEAVE, someoneLeft);
-    }
+    }else{
+		API.off(API.USER_LEAVE, someoneLeft);
+	}
 }
 function startAutoWoot(){
     autoW = true;
@@ -187,11 +194,10 @@ function setupHybrisToolBar(){
 		var suggestionBottom = $("#chat-suggestion").css("bottom");
 		suggestionBottom = suggestionBottom.substring(0, suggestionBottom.length - 2);
 		suggestionBottom = parseInt(suggestionBottom);
-		$("#chat-suggestion").css("bottom", suggestionBottom + hybrisHeaderHeight);
+		$("#chat-suggestion").css("bottom", suggestionBottom + hybrisHeaderHeight);// This makes the  ChatSuggestion go a lil more up to make place for Hybris Toolbar
 		alreadyMovedSuggestion = true;
 	}
 
-    // PlugCubed compatibility - has to be loaded BEFORE PlugCubed
     $("#chat-messages").css("height", chatMessagesHeight + "px");// This resizes the messages area to make place for Hybris Toolbar
     $("#chat-input").css("bottom", hybrisHeaderHeight + "px");// This makes the ChatInput go a lil more up to make place for Hybris Toolbar
     if($("#hybrisHeader").length == 0){
@@ -235,7 +241,7 @@ function setupAutoJoinersLeaversBtn(){
     }
     $(".icon-hybris-joiners").css("background", "url('https://cdn.plug.dj/_/static/images/icons.5f9a8e66-2aff-4176-96b8-7859f92becfc.png')");
     $(".icon-hybris-joiners").css("background-position", "-245px 0px");
-    $("#hybrisJoiners").unbind('clic.hybris');
+    $("#hybrisJoiners").unbind('click.hybris');
     $("#hybrisJoiners").bind('click.hybris', switchAutoNoticeJoinersLeavers);
 	$("#hybrisJoiners").unbind('mouseenter.hybris');
 	$("#hybrisJoiners").bind('mouseenter.hybris', showAutoJoinersLeaversToolTip);
