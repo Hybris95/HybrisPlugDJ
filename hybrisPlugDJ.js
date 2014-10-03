@@ -1,5 +1,5 @@
 /**
-Copyright Â© Hybris95
+Copyright © Hybris95
 Contact : hybris_95@hotmail.com
 Firefox:
 Add the following line as a bookmark :
@@ -17,91 +17,108 @@ javascript:(function(){$.getScript('https://rawgit.com/Hybris95/HybrisPlugDJ/mas
  * Global Vars
  */
 var debug = false;
+refreshAPIStatus();
 var ownUserName = API.getUser().username;
-var lastTimeStamp = false;
-var loadedSound = new Audio(decodeURIComponent("https://gmflowplayer.googlecode.com/files/notify.ogg"));
+var lastTimeStamp;
+var loadedSound;
+if(!loadedSound){
+    loadedSound = new Audio(decodeURIComponent("https://gmflowplayer.googlecode.com/files/notify.ogg"));
+}
 
-var autoW = false;
-var autoNotice = false;
-var autoJoinLeaveNotice = false;
+var changedAutoW;
+var autoW;
+var changedAutoNotice;
+var autoNotice;
+var changedAutoJoinLeaveNotice;
+var autoJoinLeaveNotice;
+
 /**
  * ADVANCE EVENT :
  * AutoWoot Only -> http://pastebin.com/qNV6T6pq
  */
-function autowoot(){
-    if(autoW){
-        $("#woot").click();
-    }
+var autowoot;
+if(!autowoot){
+    autowoot = function() {
+        if(autoW){
+            $("#woot").click();
+        }
+    };
 }
+
 /**
  * JOIN EVENT :
  * AutoJoinNotice
  */
-function someoneJoined(user){
-    API.chatLog(user.username + " joined the room", true);
+var someoneJoined;
+if(!someoneJoined){
+    someoneJoined = function(user){
+        API.chatLog(user.username + " joined the room", true);
+    };
 }
 /**
  * LEAVE EVENT :
  * AutoLeaveNotice
  */
-function someoneLeft(user){
-    API.chatLog(user.username + " left the room", false);
+var someoneLeft;
+if(!someoneLeft){
+    someoneLeft = function(user){
+        API.chatLog(user.username + " left the room", false);
+    };
 }
 /**
  * CHAT EVENT :
  * AutoNotice Only -> http://pastebin.com/Hsi2YMDH
  */
-function analyseChat(chat){
-    var message = chat.message;
-    var username = chat.un;
-    var type = chat.type;
-    var uid = chat.uid;
-    var cid = chat.cid;
-    var timestamp = chat.timestamp;
-    
-    // Recover the latest timestamp for the user
-    if(username == ownUserName){
-        lastTimeStamp = timestamp;
-    }
-    
-    // Watch PMs
-    if(message.match("@" + ownUserName))
-    {
-        if(debug){console.log(username + " told me : " + message);}
-        // AutoNotice
-        if(autoNotice){
-            loadedSound.play();
+var analyseChat;
+if(!analyseChat){
+    analyseChat = function(chat){
+        var message = chat.message;
+        var username = chat.un;
+        var type = chat.type;
+        var uid = chat.uid;
+        var cid = chat.cid;
+        var timestamp = chat.timestamp;
+        
+        // Recover the latest timestamp for the user
+        if(username == ownUserName){
+            lastTimeStamp = timestamp;
         }
-    }
+        
+        // Watch PMs
+        if(message.match("@" + ownUserName))
+        {
+            if(debug){console.log(username + " told me : " + message);}
+            // AutoNotice
+            if(autoNotice){
+                loadedSound.play();
+            }
+        }
+    };
 }
 /**
  * Events Management and default status configuration
  */
 function refreshAPIStatus()
 {
+    API.off(API.ADVANCE, autowoot);
     if(autoW){
         API.on(API.ADVANCE, autowoot);
-    }else{
-		API.off(API.ADVANCE, autowoot);
-	}
+    }
 	
+    API.off(API.CHAT, analyseChat);
     if(autoNotice){
         API.on(API.CHAT, analyseChat);
-    }else{
-		API.off(API.CHAT, analyseChat);
-	}
-	
+    }
+    
+	API.off(API.USER_JOIN, someoneJoined);
     if(autoJoinLeaveNotice){
         API.on(API.USER_JOIN, someoneJoined);
-    }else{
-		API.off(API.USER_JOIN, someoneJoined);
-	}
+    }
 	
+    API.off(API.USER_LEAVE, someoneLeft);
     if(autoJoinLeaveNotice){
         API.on(API.USER_LEAVE, someoneLeft);
-    }else{
-		API.off(API.USER_LEAVE, someoneLeft);
-	}
+    }
 }
 function startAutoWoot(){
     autoW = true;
@@ -115,6 +132,7 @@ function stopAutoWoot(){
     refreshAPIStatus();
 }
 function switchAutoWoot(){
+    changedAutoW = true;
     if(autoW){
         stopAutoWoot();
     }else{
@@ -132,6 +150,7 @@ function stopAutoNotice(){
     refreshAPIStatus();
 }
 function switchAutoNotice(){
+    changedAutoNotice = true;
 	if(autoNotice){
 		stopAutoNotice();
 	}else{
@@ -149,6 +168,7 @@ function stopAutoNoticeJoinersLeavers(){
     refreshAPIStatus();
 }
 function switchAutoNoticeJoinersLeavers(){
+    changedAutoJoinLeaveNotice = true;
     if(autoJoinLeaveNotice){
         stopAutoNoticeJoinersLeavers();
     }else{
@@ -169,36 +189,6 @@ function showAutoNoticeToolTip(){
 function showAutoJoinersLeaversToolTip(){
 	hideToolTip();
 	$("body").append("<div id=\"tooltip\" style=\"left: 1700px;top: 800px;\"><span>Joiners/Leavers notification</span><div class=\"corner\"></div></div>");
-}
-var alreadyMovedSuggestion;
-function setupHybrisToolBar(){
-	var appRightHeight = $(".app-right").height();
-	var chatHeaderHeight = $("#chat-header").height();
-	var chatInputHeight = $("#chat-input").height();
-	var hybrisHeaderHeight = 46;
-	var nbOfBorders = 2;
-	var sizeAboveChatInput = 10;
-	
-	var chatMessagesHeight = appRightHeight - chatHeaderHeight - chatInputHeight - hybrisHeaderHeight - nbOfBorders - sizeAboveChatInput;
-	
-	if(!alreadyMovedSuggestion){
-		var suggestionBottom = $("#chat-suggestion").css("bottom");
-		suggestionBottom = suggestionBottom.substring(0, suggestionBottom.length - 2);
-		suggestionBottom = parseInt(suggestionBottom);
-		$("#chat-suggestion").css("bottom", suggestionBottom + hybrisHeaderHeight);// This makes the  ChatSuggestion go a lil more up to make place for Hybris Toolbar
-		alreadyMovedSuggestion = true;
-	}
-
-    $("#chat-messages").css("height", chatMessagesHeight + "px");// This resizes the messages area to make place for Hybris Toolbar
-    $("#chat-input").css("bottom", hybrisHeaderHeight + "px");// This makes the ChatInput go a lil more up to make place for Hybris Toolbar
-    if($("#hybrisHeader").length == 0){
-        $("#chat").append("<div id=\"hybrisHeader\"><div class=\"divider\" /></div>");
-    }
-    $("#hybrisHeader").css("position", "absolute");
-    $("#hybrisHeader").css("height", hybrisHeaderHeight + "px");
-    $("#hybrisHeader").css("bottom", "0px");
-    $("#hybrisHeader").css("left", "10px");
-    $("#hybrisHeader").css("width", "100%");
 }
 function setupAutoWootBtn(){
     if($("#hybrisAutoWoot").length == 0){
@@ -239,16 +229,81 @@ function setupAutoJoinersLeaversBtn(){
 	$("#hybrisJoiners").unbind('mouseleave.hybris');
 	$("#hybrisJoiners").bind('mouseleave.hybris', hideToolTip);
 }
-function makeUIModifications(){
-	setupHybrisToolBar();
+var alreadyMovedSuggestion;
+function setupHybrisToolBar(){
+	var appRightHeight = $(".app-right").height();
+	var chatHeaderHeight = $("#chat-header").height();
+	var chatInputHeight = $("#chat-input").height();
+	var hybrisHeaderHeight = 46;
+	var nbOfBorders = 2;
+	var sizeAboveChatInput = 10;
+	
+	var newChatMessagesHeight = appRightHeight - chatHeaderHeight - chatInputHeight - hybrisHeaderHeight - nbOfBorders - sizeAboveChatInput;
+	
+	if(!alreadyMovedSuggestion){
+		var suggestionBottom = $("#chat-suggestion").css("bottom");
+		suggestionBottom = suggestionBottom.substring(0, suggestionBottom.length - 2);
+		suggestionBottom = parseInt(suggestionBottom);
+		$("#chat-suggestion").css("bottom", suggestionBottom + hybrisHeaderHeight);// This makes the ChatSuggestion go a lil more up to make place for Hybris Toolbar
+		alreadyMovedSuggestion = true;
+	}
+
+    var currentMessagesHeight = $("#chat-messages").height();
+    if(currentMessagesHeight != newChatMessagesHeight){
+        $("#chat-messages").fadeOut("fast").promise().done(function(){
+            $("#chat-messages").css("height", newChatMessagesHeight + "px");// This resizes the messages area to make place for Hybris Toolbar
+            $("#chat-messages").fadeIn("slow");
+        });
+        $("#chat-input").fadeOut("fast").promise().done(function(){
+            $("#chat-input").css("bottom", hybrisHeaderHeight + "px");// This makes the ChatInput go a lil more up to make place for Hybris Toolbar
+            $("#chat-input").fadeIn("slow");
+        });
+    }
+    if($("#hybrisHeader").length == 0){
+        $("#chat").append("<div id=\"hybrisHeader\"><div class=\"divider\" /></div>");
+    }
+    $("#hybrisHeader").hide();
+    $("#hybrisHeader").css("position", "absolute");
+    $("#hybrisHeader").css("height", hybrisHeaderHeight + "px");
+    $("#hybrisHeader").css("bottom", "0px");
+    $("#hybrisHeader").css("left", "10px");
+    $("#hybrisHeader").css("width", "100%");
 	setupAutoWootBtn();
 	setupAutoNoticeBtn();
 	setupAutoJoinersLeaversBtn();
+    $("#hybrisHeader").slideDown();
 }
 function main(){
-    makeUIModifications();
-    stopAutoWoot();
-    startAutoNotice();
-    stopAutoNoticeJoinersLeavers();
+    setupHybrisToolBar();
+    
+    if(changedAutoW){
+        if(autoW){
+            startAutoWoot();
+        }else{
+            stopAutoWoot();
+        }
+    }else{
+        stopAutoWoot();
+    }
+    
+    if(changedAutoNotice){
+        if(autoNotice){
+            startAutoNotice();
+        }else{
+            stopAutoNotice();
+        }
+    }else{
+        startAutoNotice();
+    }
+    
+    if(changedAutoJoinLeaveNotice){
+        if(autoJoinLeaveNotice){
+            startAutoNoticeJoinersLeavers();
+        }else{
+            stopAutoNoticeJoinersLeavers();
+        }
+    }else{
+        stopAutoNoticeJoinersLeavers();
+    }
 }
 $(document).ready(main);
