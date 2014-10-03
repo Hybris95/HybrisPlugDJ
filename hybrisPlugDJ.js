@@ -1,5 +1,5 @@
 /**
-Copyright © Hybris95
+Copyright Â© Hybris95
 Contact : hybris_95@hotmail.com
 Firefox:
 Add the following line as a bookmark :
@@ -172,18 +172,9 @@ function showAutoJoinersLeaversToolTip(){
 }
 var alreadyMovedSuggestion;
 function setupHybrisToolBar(){
-	var appRightHeight = $(".app-right").css("height");
-	appRightHeight = appRightHeight.substring(0, appRightHeight.length - 2);
-	appRightHeight = parseInt(appRightHeight);
-	
-	var chatHeaderHeight = $("#chat-header").css("height");
-	chatHeaderHeight = chatHeaderHeight.substring(0, chatHeaderHeight.length - 2);
-	chatHeaderHeight = parseInt(chatHeaderHeight);
-	
-	var chatInputHeight = $("#chat-input").css("height");
-	chatInputHeight = chatInputHeight.substring(0, chatInputHeight.length - 2);
-	chatInputHeight = parseInt(chatInputHeight);
-	
+	var appRightHeight = $(".app-right").height();
+	var chatHeaderHeight = $("#chat-header").height();
+	var chatInputHeight = $("#chat-input").height();
 	var hybrisHeaderHeight = 46;
 	var nbOfBorders = 2;
 	var sizeAboveChatInput = 10;
