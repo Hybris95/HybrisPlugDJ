@@ -33,6 +33,22 @@ var changedAutoJoinLeaveNotice;
 var autoJoinLeaveNotice;
 
 /**
+ * STATS
+ */
+var getMeanDuration;// TODO - Include this in the Advance event and implement our own history
+if(!getMeanDuration){
+    getMeanDuration = function(){
+		var meanDuration = 0;
+		var history = API.getHistory();
+		for(var i = 0; i < history.length; i++){
+			meanDuration = meanDuration + history[i].media.duration;
+		}
+		meanDuration = meanDuration / history.length;
+		return meanDuration;
+    };
+}
+
+/**
  * ADVANCE EVENT :
  * AutoWoot Only -> http://pastebin.com/qNV6T6pq
  */
@@ -96,7 +112,7 @@ if(!analyseChat){
     };
 }
 /**
- * Events Management and default status configuration
+ * Event Management
  */
 function refreshAPIStatus()
 {
@@ -175,6 +191,9 @@ function switchAutoNoticeJoinersLeavers(){
         startAutoNoticeJoinersLeavers();
     }
 }
+/**
+ * UI Management
+ */
 function hideToolTip(){
 	$("#tooltip").remove();
 }
@@ -273,6 +292,9 @@ function setupHybrisToolBar(){
 	setupAutoJoinersLeaversBtn();
     $("#hybrisHeader").slideDown();
 }
+/**
+ * Main function (executed at loading)
+ */
 function main(){
     setupHybrisToolBar();
     
