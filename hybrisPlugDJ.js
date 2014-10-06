@@ -219,7 +219,10 @@ function getIconWidth(){
     return $(".icon").width();
 }
 function getButtonWidth(){
-    return $(".chat-header-button").width();
+    var marginRight = $(".chat-header-button").css("margin-right");
+    marginRight = marginRight.substring(0, marginRight.length - 2);
+    marginRight = parseInt(marginRight);
+    return getIconWidth() + marginRight;
 }
 var hybrisHeaderHeight = 46;
 var hybrisHeaderLeftPos = 10;
