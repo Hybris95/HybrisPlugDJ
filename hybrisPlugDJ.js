@@ -218,6 +218,9 @@ function getFooterHeight(){
 function getIconWidth(){
     return $(".icon").width();
 }
+function getIconHeight(){
+    return $(".icon").height();
+}
 function getButtonWidth(){
     var marginRight = $(".chat-header-button").css("margin-right");
     marginRight = marginRight.substring(0, marginRight.length - 2);
@@ -226,32 +229,38 @@ function getButtonWidth(){
 }
 var hybrisHeaderHeight = 46;
 var hybrisHeaderLeftPos = 10;
+var nbOfBorders = 2;
+var sizeAboveChatInput = 10;
 function hideToolTip(){
 	$("#tooltip").remove();
 }
+function getTooltipLeftPos(buttonNumber){
+    var nbButtons = buttonNumber * getButtonWidth();
+    return getAppWidth() - getChatWidth() + hybrisHeaderLeftPos + nbButtons + (getIconWidth() / 2);
+}
+function getTooltipTopPos(){
+    return getChatHeight() - (getIconHeight() / 2) - sizeAboveChatInput;
+}
 function showAutoWootToolTip(){
     hideToolTip();
-    var nbButtons = 0 * getButtonWidth();
-    var tooltipLeftPos = getAppWidth() - getChatWidth() + hybrisHeaderLeftPos + nbButtons + (getIconWidth() / 2);
-    var tooltipTopPos = getChatHeight();
+    var tooltipLeftPos = getTooltipLeftPos(0);
+    var tooltipTopPos = getTooltipTopPos();
     $("body").append("<div id=\"tooltip\"><span>AutoWoot</span><div class=\"corner\"></div></div>");
     $("#tooltip").css("left", tooltipLeftPos + "px");
     $("#tooltip").css("top", tooltipTopPos + "px");
 }
 function showAutoNoticeToolTip(){
     hideToolTip();
-    var nbButtons = 1 * getButtonWidth();
-    var tooltipLeftPos = getAppWidth() - getChatWidth() + hybrisHeaderLeftPos + nbButtons + (getIconWidth() / 2);
-    var tooltipTopPos = getChatHeight();
+    var tooltipLeftPos = getTooltipLeftPos(1);
+    var tooltipTopPos = getTooltipTopPos();
     $("body").append("<div id=\"tooltip\"><span>Mention sound notification</span><div class=\"corner\"></div></div>");
     $("#tooltip").css("left", tooltipLeftPos + "px");
     $("#tooltip").css("top", tooltipTopPos + "px");
 }
 function showAutoJoinersLeaversToolTip(){
     hideToolTip();
-    var nbButtons = 2 * getButtonWidth();
-    var tooltipLeftPos = getAppWidth() - getChatWidth() + hybrisHeaderLeftPos + nbButtons + (getIconWidth() / 2);
-    var tooltipTopPos = getChatHeight();
+    var tooltipLeftPos = getTooltipLeftPos(2);
+    var tooltipTopPos = getTooltipTopPos();
     $("body").append("<div id=\"tooltip\"><span>Joiners/Leavers notification</span><div class=\"corner\"></div></div>");
     $("#tooltip").css("left", tooltipLeftPos + "px");
     $("#tooltip").css("top", tooltipTopPos + "px");
@@ -297,8 +306,6 @@ function setupHybrisToolBar(){
 	var chatHeight = getChatHeight();
 	var chatHeaderHeight = getChatHeaderHeight();
 	var chatInputHeight = getChatInputHeight();
-	var nbOfBorders = 2;
-	var sizeAboveChatInput = 10;
 	
 	var newChatMessagesHeight = chatHeight - chatHeaderHeight - chatInputHeight - hybrisHeaderHeight - nbOfBorders - sizeAboveChatInput;
 	
