@@ -194,20 +194,64 @@ function switchAutoNoticeJoinersLeavers(){
 /**
  * UI Management
  */
+function getAppWidth(){
+    return $("#app").width();
+}
+function getAppHeight(){
+    return $("#app").height();
+}
+function getChatWidth(){
+    return $("#chat").width();
+}
+function getChatHeight(){
+    return $("#chat").height();
+}
+function getChatHeaderHeight(){
+    return $("#chat-header").height();
+}
+function getChatInputHeight(){
+	return $("#chat-input").height();
+}
+function getFooterHeight(){
+    return $("#footer").height();
+}
+function getIconWidth(){
+    return $(".icon").width();
+}
+function getButtonWidth(){
+    return $(".chat-header-button").width();
+}
+var hybrisHeaderHeight = 46;
+var hybrisHeaderLeftPos = 10;
 function hideToolTip(){
 	$("#tooltip").remove();
 }
 function showAutoWootToolTip(){
-	hideToolTip();
-	$("body").append("<div id=\"tooltip\" style=\"left: 1600px;top: 800px;\"><span>AutoWoot</span><div class=\"corner\"></div></div>");
+    hideToolTip();
+    var nbButtons = 0 * getButtonWidth();
+    var tooltipLeftPos = getAppWidth() - getChatWidth() + hybrisHeaderLeftPos + nbButtons + (getIconWidth() / 2);
+    var tooltipTopPos = getChatHeight();
+    $("body").append("<div id=\"tooltip\"><span>AutoWoot</span><div class=\"corner\"></div></div>");
+    $("#tooltip").css("left", tooltipLeftPos + "px");
+    $("#tooltip").css("top", tooltipTopPos + "px");
 }
 function showAutoNoticeToolTip(){
-	hideToolTip();
-	$("body").append("<div id=\"tooltip\" style=\"left: 1650px;top: 800px;\"><span>Mention sound notification</span><div class=\"corner\"></div></div>");
+    hideToolTip();
+    var nbButtons = 1 * getButtonWidth();
+    var tooltipLeftPos = getAppWidth() - getChatWidth() + hybrisHeaderLeftPos + nbButtons + (getIconWidth() / 2);
+    var tooltipTopPos = getChatHeight();
+    $("body").append("<div id=\"tooltip\"><span>Mention sound notification</span><div class=\"corner\"></div></div>");
+    $("#tooltip").css("left", tooltipLeftPos + "px");
+    $("#tooltip").css("top", tooltipTopPos + "px");
 }
 function showAutoJoinersLeaversToolTip(){
-	hideToolTip();
-	$("body").append("<div id=\"tooltip\" style=\"left: 1700px;top: 800px;\"><span>Joiners/Leavers notification</span><div class=\"corner\"></div></div>");
+    hideToolTip();
+    var nbButtons = 2 * getButtonWidth();
+    var tooltipLeftPos = getAppWidth() - getChatWidth() + hybrisHeaderLeftPos + nbButtons + (getIconWidth() / 2);
+    var tooltipTopPos = getChatHeight();
+    $("body").append("<div id=\"tooltip\"><span>Joiners/Leavers notification</span><div class=\"corner\"></div></div>");
+    $("#tooltip").css("left", tooltipLeftPos + "px");
+    $("#tooltip").css("top", tooltipTopPos + "px");
 }
 function setupAutoWootBtn(){
     if($("#hybrisAutoWoot").length == 0){
@@ -247,31 +291,30 @@ function setupAutoJoinersLeaversBtn(){
 }
 var alreadyMovedSuggestion;
 function setupHybrisToolBar(){
-	var appRightHeight = $(".app-right").height();
-	var chatHeaderHeight = $("#chat-header").height();
-	var chatInputHeight = $("#chat-input").height();
-	var hybrisHeaderHeight = 46;
+	var chatHeight = getChatHeight();
+	var chatHeaderHeight = getChatHeaderHeight();
+	var chatInputHeight = getChatInputHeight();
 	var nbOfBorders = 2;
 	var sizeAboveChatInput = 10;
 	
-	var newChatMessagesHeight = appRightHeight - chatHeaderHeight - chatInputHeight - hybrisHeaderHeight - nbOfBorders - sizeAboveChatInput;
+	var newChatMessagesHeight = chatHeight - chatHeaderHeight - chatInputHeight - hybrisHeaderHeight - nbOfBorders - sizeAboveChatInput;
 	
 	if(!alreadyMovedSuggestion){
 		var suggestionBottom = $("#chat-suggestion").css("bottom");
 		suggestionBottom = suggestionBottom.substring(0, suggestionBottom.length - 2);
 		suggestionBottom = parseInt(suggestionBottom);
-		$("#chat-suggestion").css("bottom", suggestionBottom + hybrisHeaderHeight);// This makes the ChatSuggestion go a lil more up to make place for Hybris Toolbar
+		$("#chat-suggestion").css("bottom", suggestionBottom + hybrisHeaderHeight);
 		alreadyMovedSuggestion = true;
 	}
 
     var currentMessagesHeight = $("#chat-messages").height();
     if(currentMessagesHeight != newChatMessagesHeight){
         $("#chat-messages").fadeOut("fast").promise().done(function(){
-            $("#chat-messages").css("height", newChatMessagesHeight + "px");// This resizes the messages area to make place for Hybris Toolbar
+            $("#chat-messages").css("height", newChatMessagesHeight + "px");
             $("#chat-messages").fadeIn("slow");
         });
         $("#chat-input").fadeOut("fast").promise().done(function(){
-            $("#chat-input").css("bottom", hybrisHeaderHeight + "px");// This makes the ChatInput go a lil more up to make place for Hybris Toolbar
+            $("#chat-input").css("bottom", hybrisHeaderHeight + "px");
             $("#chat-input").fadeIn("slow");
         });
     }
@@ -282,7 +325,7 @@ function setupHybrisToolBar(){
     $("#hybrisHeader").css("position", "absolute");
     $("#hybrisHeader").css("height", hybrisHeaderHeight + "px");
     $("#hybrisHeader").css("bottom", "0px");
-    $("#hybrisHeader").css("left", "10px");
+    $("#hybrisHeader").css("left", hybrisHeaderLeftPos + "px");
     $("#hybrisHeader").css("width", "100%");
 	setupAutoWootBtn();
 	setupAutoNoticeBtn();
