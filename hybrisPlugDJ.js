@@ -1,5 +1,5 @@
 /**
-Copyright © Hybris95
+Copyright Â© Hybris95
 Contact : hybris_95@hotmail.com
 Firefox:
 Add the following line as a bookmark :
@@ -213,7 +213,6 @@ function setupAutoWootBtn(){
     if($("#hybrisAutoWoot").length == 0){
         $("#hybrisHeader").append("<div id=\"hybrisAutoWoot\" class=\"chat-header-button\"><i class=\"icon icon-hybris-autowoot\"></i></div>");
     }
-    $(".icon-hybris-autowoot").css("background", "url('https://cdn.plug.dj/_/static/images/icons.5f9a8e66-2aff-4176-96b8-7859f92becfc.png')");
     $(".icon-hybris-autowoot").css("background-position", "-105px -280px");
     $("#hybrisAutoWoot").unbind('click.hybris');
     $("#hybrisAutoWoot").bind('click.hybris', switchAutoWoot);
@@ -226,7 +225,6 @@ function setupAutoNoticeBtn(){
     if($("#hybrisMention").length == 0){
         $("#hybrisHeader").append("<div id=\"hybrisMention\" class=\"chat-header-button\"><i class=\"icon icon-hybris-mention\"></i></div>");
     }
-    $(".icon-hybris-mention").css("background", "url('https://cdn.plug.dj/_/static/images/icons.5f9a8e66-2aff-4176-96b8-7859f92becfc.png')");
     $(".icon-hybris-mention").css("background-position", "-140px 0px");
     $("#hybrisMention").unbind('click.hybris');
     $("#hybrisMention").bind('click.hybris', switchAutoNotice);
@@ -239,7 +237,6 @@ function setupAutoJoinersLeaversBtn(){
     if($("#hybrisJoiners").length == 0){
         $("#hybrisHeader").append("<div id=\"hybrisJoiners\" class=\"chat-header-button\"><i class=\"icon icon-hybris-joiners\"></i></div>");
     }
-    $(".icon-hybris-joiners").css("background", "url('https://cdn.plug.dj/_/static/images/icons.5f9a8e66-2aff-4176-96b8-7859f92becfc.png')");
     $(".icon-hybris-joiners").css("background-position", "-245px 0px");
     $("#hybrisJoiners").unbind('click.hybris');
     $("#hybrisJoiners").bind('click.hybris', switchAutoNoticeJoinersLeavers);
