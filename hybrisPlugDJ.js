@@ -42,10 +42,15 @@ if(!loadedSound){
     loadedSound = new Audio(decodeURIComponent("https://gmflowplayer.googlecode.com/files/notify.ogg"));
 }
 
+var autoWHookedOnApi;
 var changedAutoW;
 var autoW;
+
+var autoNoticeHookedOnApi;
 var changedAutoNotice;
 var autoNotice;
+
+var autoJoinLeaveHookedOnApi;
 var changedAutoJoinLeaveNotice;
 var autoJoinLeaveNotice;
 
@@ -109,7 +114,9 @@ if(!autowoot){
 var someoneJoined;
 if(!someoneJoined){
     someoneJoined = function(user){
-        API.chatLog(user.username + " joined the room", true);
+    	if(autoJoinLeaveNotice) {
+            API.chatLog(user.username + " joined the room", true);
+    	}
     };
 }
 /**
@@ -119,7 +126,9 @@ if(!someoneJoined){
 var someoneLeft;
 if(!someoneLeft){
     someoneLeft = function(user){
-        API.chatLog(user.username + " left the room", false);
+    	if(autoJoinLeaveNotice) {
+            API.chatLog(user.username + " left the room", false);
+    	}
     };
 }
 /**
@@ -157,24 +166,20 @@ if(!analyseChat){
  */
 function refreshAPIStatus()
 {
-    API.off(API.ADVANCE, autowoot);
-    if(autoW){
+    if(!autoWHookedOnApi){
         API.on(API.ADVANCE, autowoot);
-    }
-	
-    API.off(API.CHAT, analyseChat);
-    if(autoNotice){
-        API.on(API.CHAT, analyseChat);
+        autoWHookedOnApi = true;
     }
     
-	API.off(API.USER_JOIN, someoneJoined);
-    if(autoJoinLeaveNotice){
-        API.on(API.USER_JOIN, someoneJoined);
+    if(!autoNoticeHookedOnApi){
+        API.on(API.CHAT, analyseChat);
+        autoNoticeHookedOnApi = true;
     }
-	
-    API.off(API.USER_LEAVE, someoneLeft);
-    if(autoJoinLeaveNotice){
+    
+    if(!autoJoinLeaveHookedOnApi){
+        API.on(API.USER_JOIN, someoneJoined);
         API.on(API.USER_LEAVE, someoneLeft);
+        autoJoinLeaveHookedOnApi = true;
     }
 }
 function startAutoWoot(){
