@@ -34,7 +34,6 @@ javascript:(function(){$.getScript('https://rawgit.com/Hybris95/HybrisPlugDJ/mas
  * Global Vars
  */
 var debug = false;
-refreshAPIStatus();
 var ownUserName = API.getUser().username;
 var lastTimeStamp;
 var loadedSound;
