@@ -186,12 +186,10 @@ function startAutoWoot(){
     autoW = true;
     $("#hybrisAutoWoot").css("background-color", "#105D2F");
     autowoot();
-    refreshAPIStatus();
 }
 function stopAutoWoot(){
     autoW = false;
     $("#hybrisAutoWoot").css("background-color", "#5D102F");
-    refreshAPIStatus();
 }
 function switchAutoWoot(){
     changedAutoW = true;
@@ -203,13 +201,11 @@ function switchAutoWoot(){
 }
 function startAutoNotice(){
     autoNotice = true;
-	$("#hybrisMention").css("background-color", "#105D2F");
-    refreshAPIStatus();
+    $("#hybrisMention").css("background-color", "#105D2F");
 }
 function stopAutoNotice(){
     autoNotice = false;
-	$("#hybrisMention").css("background-color", "#5D102F");
-    refreshAPIStatus();
+    $("#hybrisMention").css("background-color", "#5D102F");
 }
 function switchAutoNotice(){
     changedAutoNotice = true;
@@ -222,12 +218,10 @@ function switchAutoNotice(){
 function startAutoNoticeJoinersLeavers(){
     autoJoinLeaveNotice = true;
     $("#hybrisJoiners").css("background-color", "#105D2F");
-    refreshAPIStatus();
 }
 function stopAutoNoticeJoinersLeavers(){
     autoJoinLeaveNotice = false;
     $("#hybrisJoiners").css("background-color", "#5D102F");
-    refreshAPIStatus();
 }
 function switchAutoNoticeJoinersLeavers(){
     changedAutoJoinLeaveNotice = true;
@@ -413,6 +407,7 @@ function setupHybrisToolBar(){
  */
 function main(){
     setupHybrisToolBar();
+    refreshAPIStatus();
     
     if(changedAutoW){
         if(autoW){
