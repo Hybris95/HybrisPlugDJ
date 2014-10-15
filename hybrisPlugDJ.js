@@ -60,11 +60,24 @@ var getMeanDuration;// TODO - Include this in the Advance event and implement ou
 if(!getMeanDuration){
     getMeanDuration = function(){
 		var meanDuration = 0;
+		var minDuration;
+		var maxDuration = 0;
 		var history = API.getHistory();
 		for(var i = 0; i < history.length; i++){
-			meanDuration = meanDuration + history[i].media.duration;
+			var currentDuration = history[i].media.duration;
+			meanDuration = meanDuration + currentDuration;
+			if(i == 0){
+			    minDuration = currentDuration;
+			}
+			if(currentDuration < minDuration){
+			    minDuration = currentDuration;
+			}
+			if(currentDuration > maxDuration){
+			    maxDuration = currentDuration;
+			}
 		}
-		meanDuration = meanDuration / history.length;
+		meanDuration = (meanDuration - minDuration) - maxDuration;
+		meanDuration = meanDuration / (history.length - 2);
 		return meanDuration;
     };
 }
