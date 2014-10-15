@@ -223,7 +223,7 @@ function refreshAPIStatus()
 function startAutoWoot(){
     autoW = true;
     $("#hybrisAutoWoot").css("background-color", "#105D2F");
-    autowoot();
+    woot();
 }
 function stopAutoWoot(){
     autoW = false;
