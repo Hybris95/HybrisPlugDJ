@@ -41,17 +41,17 @@ if(!loadedSound){
     loadedSound = new Audio(decodeURIComponent("https://gmflowplayer.googlecode.com/files/notify.ogg"));
 }
 
-var autoWHookedOnApi;
 var changedAutoW;
 var autoW;
 
-var autoNoticeHookedOnApi;
 var changedAutoNotice;
 var autoNotice;
 
-var autoJoinLeaveHookedOnApi;
 var changedAutoJoinLeaveNotice;
 var autoJoinLeaveNotice;
+
+var changedAutoHVideo;
+var autoHVideo;
 
 /**
  * STATS
@@ -95,21 +95,59 @@ if(!getEta){
 
 /**
  * ADVANCE EVENT :
- * AutoWoot Only -> http://pastebin.com/qNV6T6pq
+ * AutoWoot Only
  */
-var autowoot;
-if(!autowoot){
-    autowoot = function() {
+var advanceEventHookedOnApi;
+var advanceFunction;
+if(!advanceFunction){
+    advanceFunction = function() {
+        if(autoHVideo){
+            hideVideo();
+        }else{
+            showVideo();
+        }
         if(autoW){
-            $("#woot").click();
+            woot();
         }
     };
+}
+
+function woot() {
+    $("#woot").click();
+}
+
+var videoHeight;
+var videoWidth;
+function hideVideo() {
+    if(!videoHeight){
+        videoHeight = $("#playback-container").css("height");
+    }
+    if(!videoWidth){
+        videoWidth = $("#playback-container").css("width");
+    }
+    $("#playback-container").css("height", "0");
+    $("#playback-container").css("width", "0");
+}
+
+function showVideo() {
+    if(videoHeight){
+        $("#playback-container").css("height", videoHeight);
+    }else{
+        $("#playback-container").css("height", "100%");
+    }
+    
+    if(videoWidth){
+        $("#playback-container").css("width", videoWidth);
+    }else{
+        $("#playback-container").css("width", "100%");
+    }
 }
 
 /**
  * JOIN EVENT :
  * AutoJoinNotice
  */
+var autoJoinLeaveHookedOnApi;
 var someoneJoined;
 if(!someoneJoined){
     someoneJoined = function(user){
@@ -134,6 +172,7 @@ if(!someoneLeft){
  * CHAT EVENT :
  * AutoNotice Only -> http://pastebin.com/Hsi2YMDH
  */
+var chatEventHookedOnApi;
 var analyseChat;
 if(!analyseChat){
     analyseChat = function(chat){
@@ -165,14 +204,14 @@ if(!analyseChat){
  */
 function refreshAPIStatus()
 {
-    if(!autoWHookedOnApi){
-        API.on(API.ADVANCE, autowoot);
-        autoWHookedOnApi = true;
+    if(!advanceEventHookedOnApi){
+        API.on(API.ADVANCE, advanceFunction);
+        advanceEventHookedOnApi = true;
     }
     
-    if(!autoNoticeHookedOnApi){
+    if(!chatEventHookedOnApi){
         API.on(API.CHAT, analyseChat);
-        autoNoticeHookedOnApi = true;
+        chatEventHookedOnApi = true;
     }
     
     if(!autoJoinLeaveHookedOnApi){
@@ -228,6 +267,25 @@ function switchAutoNoticeJoinersLeavers(){
         stopAutoNoticeJoinersLeavers();
     }else{
         startAutoNoticeJoinersLeavers();
+    }
+}
+function startAutoHVideo(){
+    autoHVideo = true;
+    $("#hybrisVidToggle").css("background-color", "#105D2F");
+    hideVideo();
+}
+function stopAutoHVideo(){
+    autoHVideo = false;
+    $("#hybrisVidToggle").css("background-color", "#5D102F");
+    hideVideo();
+    showVideo();
+}
+function switchAutoHVideo(){
+    changedAutoHVideo = true;
+    if(!autoHVideo){
+        startAutoHVideo();
+    }else{
+        stopAutoHVideo();
     }
 }
 /**
@@ -312,6 +370,14 @@ function showEtaToolTip(){
     $("#tooltip").css("left", tooltipLeftPos + "px");
     $("#tooltip").css("top", tooltipTopPos + "px");
 }
+function showToggleVideoToolTip(){
+    hideToolTip();
+    var tooltipLeftPos = getTooltipLeftPos(4);
+    var tooltipTopPos = getTooltipTopPos();
+    $("body").append("<div id=\"tooltip\"><span>Hide Video</span><div class=\"corner\"></div></div>");
+    $("#tooltip").css("left", tooltipLeftPos + "px");
+    $("#tooltip").css("top", tooltipTopPos + "px");
+}
 function setupAutoWootBtn(){
     if($("#hybrisAutoWoot").length == 0){
         $("#hybrisHeader").append("<div id=\"hybrisAutoWoot\" class=\"chat-header-button\"><i class=\"icon icon-hybris-autowoot\"></i></div>");
@@ -359,6 +425,17 @@ function setupEtaBtn(){
     $("#hybrisEta").unbind('mouseleave.hybris');
     $("#hybrisEta").bind('mouseleave.hybris', hideToolTip);
 }
+function setupVideoToggleBtn(){
+    if($("#hybrisVidToggle").length == 0){
+        $("#hybrisHeader").append("<div id =\"hybrisVidToggle\" class=\"chat-header-button\"><i class=\"icon icon-logout-white\"></i></div>");
+    }
+    $("#hybrisVidToggle").unbind('clic.hybris');
+    $("#hybrisVidToggle").bind('click.hybris', switchAutoHVideo);
+    $("#hybrisVidToggle").unbind('mouseenter.hybris');
+    $("#hybrisVidToggle").bind('mouseenter.hybris', showToggleVideoToolTip);
+    $("#hybrisVidToggle").unbind('mouseleave.hybris');
+    $("#hybrisVidToggle").bind('mouseleave.hybris', hideToolTip);
+}
 var alreadyMovedSuggestion;
 function setupHybrisToolBar(){
 	var chatHeight = getChatHeight();
@@ -399,6 +476,7 @@ function setupHybrisToolBar(){
 	setupAutoNoticeBtn();
 	setupAutoJoinersLeaversBtn();
 	setupEtaBtn();
+    setupVideoToggleBtn();
     $("#hybrisHeader").slideDown();
 }
 /**
@@ -436,6 +514,16 @@ function main(){
         }
     }else{
         stopAutoNoticeJoinersLeavers();
+    }
+    
+    if(changedAutoHVideo){
+        if(autoHVideo){
+            startAutoHVideo();
+        }else{
+            stopAutoHVideo();
+        }
+    }else{
+        stopAutoHVideo();
     }
 }
 $(document).ready(main);
