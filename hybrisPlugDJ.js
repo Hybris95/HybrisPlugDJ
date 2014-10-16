@@ -50,8 +50,8 @@ var autoNotice;
 var changedAutoJoinLeaveNotice;
 var autoJoinLeaveNotice;
 
-var changedAutoHVideo;
-var autoHVideo;
+var changedAutoHUI;
+var autoHUI;
 
 /**
  * STATS
@@ -108,17 +108,18 @@ if(!getEta){
 
 /**
  * ADVANCE EVENT :
- * AutoWoot Only
+ * AutoWoot and AutoHideUI
  */
 var advanceEventHookedOnApi;
 var advanceFunction;
 if(!advanceFunction){
     advanceFunction = function() {
-        if(autoHVideo){
-            hideVideo();
+        if(autoHUI){
+            hideUI();
         }else{
-            showVideo();
+            showUI();
         }
+        
         if(autoW){
             woot();
         }
@@ -143,6 +144,7 @@ function hideVideo() {
 }
 
 function showVideo() {
+    hideVideo();
     if(videoHeight){
         $("#playback-container").css("height", videoHeight);
     }else{
@@ -154,6 +156,103 @@ function showVideo() {
     }else{
         $("#playback-container").css("width", "100%");
     }
+}
+
+var background;
+var playbackBGHeight;
+var playbackBGWidth;
+function hideBG() {
+    var playbackImg = $("#playback > div:nth-child(1) > img:nth-child(1)");
+    if(!background){
+        background = $(".room-background").css("background-image");
+    }
+    $(".room-background").css("background-image","");
+    if(!playbackBGHeight){
+        playbackBGHeight = playbackImg.css("height");
+    }
+    if(!playbackBGWidth){
+        playbackBGWidth = playbackImg.css("width");
+    }
+    playbackImg.css("height", "0");
+    playbackImg.css("width", "0");
+}
+
+function showBG() {
+    hideBG();
+    if(background){
+        $(".room-background").css("background-image", background);
+    }else{
+        $(".room-background").css("background-image", "url(\"https://cdn.plug.dj/_/static/images/community/custom/2014hw/background.29748a148b0c5440ddc5899e07bc32b1a1d4b86c.jpg\")");// Halloween BG
+    }
+    var playbackImg = $("#playback > div:nth-child(1) > img:nth-child(1)");
+    if(playbackBGHeight){
+        playbackImg.css("height", playbackBGHeight);
+    }else{
+        playbackImg.css("height", "100%");
+    }
+    if(playbackBGWidth){
+        playbackImg.css("width", playbackBGWidth);
+    }else{
+        playbackImg.css("width", "100%");
+    }
+}
+
+var audienceHeight;
+var audienceWidth;
+var djboothHeight;
+var djboothWidth;
+function hideAvatars() {
+    if(!audienceHeight){
+        audienceHeight = $("#audience-canvas").css("height");
+    }
+    if(!audienceWidth){
+        audienceWidth = $("#audience-canvas").css("width");
+    }
+    $("#audience-canvas").css("height", "0");
+    $("#audience-canvas").css("width", "0");
+    if(!djboothHeight){
+        djboothHeight = $("#dj-canvas").css("height");
+    }
+    if(!djboothWidth){
+        djboothWidth = $("#dj-canvas").css("width");
+    }
+    $("#dj-canvas").css("height", "0");
+    $("#dj-canvas").css("width", "0");
+}
+
+function showAvatars() {
+    hideAvatars();
+    if(audienceHeight){
+        $("#audience-canvas").css("height", audienceHeight);
+    }else{
+        $("#audience-canvas").css("height", "100%");
+    }
+    if(audienceWidth){
+        $("#audience-canvas").css("width", audienceWidth);
+    }else{
+        $("#audience-canvas").css("width", "100%");
+    }
+    if(djboothHeight){
+        $("#dj-canvas").css("height", djboothHeight);
+    }else{
+        $("#dj-canvas").css("height", "100%");
+    }
+    if(djboothWidth){
+        $("#dj-canvas").css("width", djboothWidth);
+    }else{
+        $("#dj-canvas").css("width", "100%");
+    }
+}
+
+function hideUI(){
+    hideVideo();
+    hideBG();
+    hideAvatars();
+}
+function showUI(){
+    showVideo();
+    showBG();
+    showAvatars();
 }
 
 /**
@@ -282,23 +381,22 @@ function switchAutoNoticeJoinersLeavers(){
         startAutoNoticeJoinersLeavers();
     }
 }
-function startAutoHVideo(){
-    autoHVideo = true;
-    $("#hybrisVidToggle").css("background-color", "#105D2F");
-    hideVideo();
+function startAutoHUI(){
+    autoHUI = true;
+    $("#hybrisUIToggle").css("background-color", "#105D2F");
+    hideUI();
 }
-function stopAutoHVideo(){
-    autoHVideo = false;
-    $("#hybrisVidToggle").css("background-color", "#5D102F");
-    hideVideo();
-    showVideo();
+function stopAutoHUI(){
+    autoHUI = false;
+    $("#hybrisUIToggle").css("background-color", "#5D102F");
+    showUI();
 }
-function switchAutoHVideo(){
-    changedAutoHVideo = true;
-    if(!autoHVideo){
-        startAutoHVideo();
+function switchAutoHUI(){
+    changedAutoHUI = true;
+    if(!autoHUI){
+        startAutoHUI();
     }else{
-        stopAutoHVideo();
+        stopAutoHUI();
     }
 }
 /**
@@ -383,11 +481,11 @@ function showEtaToolTip(){
     $("#tooltip").css("left", tooltipLeftPos + "px");
     $("#tooltip").css("top", tooltipTopPos + "px");
 }
-function showToggleVideoToolTip(){
+function showToggleUIToolTip(){
     hideToolTip();
     var tooltipLeftPos = getTooltipLeftPos(4);
     var tooltipTopPos = getTooltipTopPos();
-    $("body").append("<div id=\"tooltip\"><span>Hide Video</span><div class=\"corner\"></div></div>");
+    $("body").append("<div id=\"tooltip\"><span>Hide User Interface</span><div class=\"corner\"></div></div>");
     $("#tooltip").css("left", tooltipLeftPos + "px");
     $("#tooltip").css("top", tooltipTopPos + "px");
 }
@@ -438,16 +536,16 @@ function setupEtaBtn(){
     $("#hybrisEta").unbind('mouseleave.hybris');
     $("#hybrisEta").bind('mouseleave.hybris', hideToolTip);
 }
-function setupVideoToggleBtn(){
-    if($("#hybrisVidToggle").length == 0){
-        $("#hybrisHeader").append("<div id =\"hybrisVidToggle\" class=\"chat-header-button\"><i class=\"icon icon-logout-white\"></i></div>");
+function setupUIToggleBtn(){
+    if($("#hybrisUIToggle").length == 0){
+        $("#hybrisHeader").append("<div id =\"hybrisUIToggle\" class=\"chat-header-button\"><i class=\"icon icon-logout-white\"></i></div>");
     }
-    $("#hybrisVidToggle").unbind('clic.hybris');
-    $("#hybrisVidToggle").bind('click.hybris', switchAutoHVideo);
-    $("#hybrisVidToggle").unbind('mouseenter.hybris');
-    $("#hybrisVidToggle").bind('mouseenter.hybris', showToggleVideoToolTip);
-    $("#hybrisVidToggle").unbind('mouseleave.hybris');
-    $("#hybrisVidToggle").bind('mouseleave.hybris', hideToolTip);
+    $("#hybrisUIToggle").unbind('clic.hybris');
+    $("#hybrisUIToggle").bind('click.hybris', switchAutoHUI);
+    $("#hybrisUIToggle").unbind('mouseenter.hybris');
+    $("#hybrisUIToggle").bind('mouseenter.hybris', showToggleUIToolTip);
+    $("#hybrisUIToggle").unbind('mouseleave.hybris');
+    $("#hybrisUIToggle").bind('mouseleave.hybris', hideToolTip);
 }
 var alreadyMovedSuggestion;
 function setupHybrisToolBar(){
@@ -489,7 +587,7 @@ function setupHybrisToolBar(){
 	setupAutoNoticeBtn();
 	setupAutoJoinersLeaversBtn();
 	setupEtaBtn();
-    setupVideoToggleBtn();
+    setupUIToggleBtn();
     $("#hybrisHeader").slideDown();
 }
 /**
@@ -529,14 +627,14 @@ function main(){
         stopAutoNoticeJoinersLeavers();
     }
     
-    if(changedAutoHVideo){
-        if(autoHVideo){
-            startAutoHVideo();
+    if(changedAutoHUI){
+        if(autoHUI){
+            startAutoHUI();
         }else{
-            stopAutoHVideo();
+            stopAutoHUI();
         }
     }else{
-        stopAutoHVideo();
+        stopAutoHUI();
     }
 }
 $(document).ready(main);
