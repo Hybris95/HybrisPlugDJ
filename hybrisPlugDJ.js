@@ -76,8 +76,13 @@ if(!getMeanDuration){
 			    maxDuration = currentDuration;
 			}
 		}
-		meanDuration = (meanDuration - minDuration) - maxDuration;
-		meanDuration = meanDuration / (history.length - 2);
+        if(history.length > 2){
+            meanDuration = (meanDuration - minDuration) - maxDuration;
+            meanDuration = meanDuration / (history.length - 2);
+        }
+        else if(history.length != 0){
+            meanDuration = meanDuration / history.length
+        }
 		return meanDuration;
     };
 }
