@@ -496,39 +496,36 @@ function showToggleUIToolTip(){
 }
 function setupAutoWootBtn(){
     if($("#hybrisAutoWoot").length == 0){
-        $("#hybrisHeader").append("<div id=\"hybrisAutoWoot\" class=\"chat-header-button\"><i class=\"icon icon-hybris-autowoot\"></i></div>");
+        $("#hybrisHeader").append("<div id=\"hybrisAutoWoot\" class=\"chat-header-button\"><i class=\"icon icon-woot-disabled\"></i></div>");
     }
-    $(".icon-hybris-autowoot").css("background-position", "-105px -280px");
     $("#hybrisAutoWoot").unbind('click.hybris');
     $("#hybrisAutoWoot").bind('click.hybris', switchAutoWoot);
-	$("#hybrisAutoWoot").unbind('mouseenter.hybris');
-	$("#hybrisAutoWoot").bind('mouseenter.hybris', showAutoWootToolTip);
-	$("#hybrisAutoWoot").unbind('mouseleave.hybris');
-	$("#hybrisAutoWoot").bind('mouseleave.hybris', hideToolTip);
+    $("#hybrisAutoWoot").unbind('mouseenter.hybris');
+    $("#hybrisAutoWoot").bind('mouseenter.hybris', showAutoWootToolTip);
+    $("#hybrisAutoWoot").unbind('mouseleave.hybris');
+    $("#hybrisAutoWoot").bind('mouseleave.hybris', hideToolTip);
 }
 function setupAutoNoticeBtn(){
     if($("#hybrisMention").length == 0){
-        $("#hybrisHeader").append("<div id=\"hybrisMention\" class=\"chat-header-button\"><i class=\"icon icon-hybris-mention\"></i></div>");
+        $("#hybrisHeader").append("<div id=\"hybrisMention\" class=\"chat-header-button\"><i class=\"icon icon-chat-sound-on\"></i></div>");
     }
-    $(".icon-hybris-mention").css("background-position", "-140px 0px");
     $("#hybrisMention").unbind('click.hybris');
     $("#hybrisMention").bind('click.hybris', switchAutoNotice);
-	$("#hybrisMention").unbind('mouseenter.hybris');
-	$("#hybrisMention").bind('mouseenter.hybris', showAutoNoticeToolTip);
-	$("#hybrisMention").unbind('mouseleave.hybris');
-	$("#hybrisMention").bind('mouseleave.hybris', hideToolTip);
+    $("#hybrisMention").unbind('mouseenter.hybris');
+    $("#hybrisMention").bind('mouseenter.hybris', showAutoNoticeToolTip);
+    $("#hybrisMention").unbind('mouseleave.hybris');
+    $("#hybrisMention").bind('mouseleave.hybris', hideToolTip);
 }
 function setupAutoJoinersLeaversBtn(){
     if($("#hybrisJoiners").length == 0){
-        $("#hybrisHeader").append("<div id=\"hybrisJoiners\" class=\"chat-header-button\"><i class=\"icon icon-hybris-joiners\"></i></div>");
+        $("#hybrisHeader").append("<div id=\"hybrisJoiners\" class=\"chat-header-button\"><i class=\"icon icon-ignore\"></i></div>");
     }
-    $(".icon-hybris-joiners").css("background-position", "-245px 0px");
     $("#hybrisJoiners").unbind('click.hybris');
     $("#hybrisJoiners").bind('click.hybris', switchAutoNoticeJoinersLeavers);
-	$("#hybrisJoiners").unbind('mouseenter.hybris');
-	$("#hybrisJoiners").bind('mouseenter.hybris', showAutoJoinersLeaversToolTip);
-	$("#hybrisJoiners").unbind('mouseleave.hybris');
-	$("#hybrisJoiners").bind('mouseleave.hybris', hideToolTip);
+    $("#hybrisJoiners").unbind('mouseenter.hybris');
+    $("#hybrisJoiners").bind('mouseenter.hybris', showAutoJoinersLeaversToolTip);
+    $("#hybrisJoiners").unbind('mouseleave.hybris');
+    $("#hybrisJoiners").bind('mouseleave.hybris', hideToolTip);
 }
 function setupEtaBtn(){
     if($("#hybrisEta").length == 0){
