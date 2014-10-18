@@ -54,6 +54,23 @@ var changedAutoHUI;
 var autoHUI;
 
 /**
+ * Just a chill room features
+ */
+function isInChill(){
+	return window.location.pathname == "/new-to-this-shit-mrsuicidesheep";
+}
+var opListPath = "http://just-a-chill-room.net/op-forbidden-list/";
+function askCurrentOP(){
+	var currentMedia = API.getMedia();
+	var songTitle = currentMedia.title;
+	var songAuthor = currentMedia.author;
+	// TODO - Recover OP list
+	//$.get(opListPath);// TODO - Make sure this can be executed somehow "iFrame maybe?" (CORS blocks this : https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy)
+	// TODO - Compare OP list with songTitle and songAuthor
+	// TODO - Say if results may match
+	API.chatLog("Still Under Construction", true);
+}
+/**
  * STATS
  */
 var getMeanDuration;// TODO - Include this in the Advance event and implement our own history
@@ -494,6 +511,14 @@ function showToggleUIToolTip(){
     $("#tooltip").css("left", tooltipLeftPos + "px");
     $("#tooltip").css("top", tooltipTopPos + "px");
 }
+function showOPBtnToolTip(){
+	hideToolTip();
+    var tooltipLeftPos = getTooltipLeftPos(5);
+    var tooltipTopPos = getTooltipTopPos();
+    $("body").append("<div id=\"tooltip\"><span>OP Song ?</span><div class=\"corner\"></div></div>");
+    $("#tooltip").css("left", tooltipLeftPos + "px");
+    $("#tooltip").css("top", tooltipTopPos + "px");
+}
 function setupAutoWootBtn(){
     if($("#hybrisAutoWoot").length == 0){
         $("#hybrisHeader").append("<div id=\"hybrisAutoWoot\" class=\"chat-header-button\"><i class=\"icon icon-woot-disabled\"></i></div>");
@@ -542,12 +567,23 @@ function setupUIToggleBtn(){
     if($("#hybrisUIToggle").length == 0){
         $("#hybrisHeader").append("<div id =\"hybrisUIToggle\" class=\"chat-header-button\"><i class=\"icon icon-logout-white\"></i></div>");
     }
-    $("#hybrisUIToggle").unbind('clic.hybris');
+    $("#hybrisUIToggle").unbind('click.hybris');
     $("#hybrisUIToggle").bind('click.hybris', switchAutoHUI);
     $("#hybrisUIToggle").unbind('mouseenter.hybris');
     $("#hybrisUIToggle").bind('mouseenter.hybris', showToggleUIToolTip);
     $("#hybrisUIToggle").unbind('mouseleave.hybris');
     $("#hybrisUIToggle").bind('mouseleave.hybris', hideToolTip);
+}
+function setupOPBtn(){
+	if($("#hybrisOPBtn").length == 0){
+		$("#hybrisHeader").append("<div id=\"hybrisOPBtn\" class=\"chat-header-button\"><i class=\"icon icon-meh\"></i></div>");
+	}
+	$("#hybrisOPBtn").unbind('click.hybris');
+	$("#hybrisOPBtn").bind('click.hybris', askCurrentOP);
+    $("#hybrisOPBtn").unbind('mouseenter.hybris');
+    $("#hybrisOPBtn").bind('mouseenter.hybris', showOPBtnToolTip);
+    $("#hybrisOPBtn").unbind('mouseleave.hybris');
+    $("#hybrisOPBtn").bind('mouseleave.hybris', hideToolTip);
 }
 var alreadyMovedSuggestion;
 function setupHybrisToolBar(){
@@ -590,6 +626,9 @@ function setupHybrisToolBar(){
 	setupAutoJoinersLeaversBtn();
 	setupEtaBtn();
     setupUIToggleBtn();
+	if(isInChill()){
+		setupOPBtn();
+	}
     $("#hybrisHeader").slideDown();
 }
 /**
@@ -616,7 +655,7 @@ function main(){
             stopAutoNotice();
         }
     }else{
-        startAutoNotice();
+        stopAutoNotice();
     }
     
     if(changedAutoJoinLeaveNotice){
