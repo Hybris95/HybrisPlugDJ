@@ -59,17 +59,6 @@ var autoHUI;
 function isInChill(){
 	return window.location.pathname == "/new-to-this-shit-mrsuicidesheep";
 }
-var opListPath = "http://just-a-chill-room.net/op-forbidden-list/";
-function askCurrentOP(){
-	var currentMedia = API.getMedia();
-	var songTitle = currentMedia.title;
-	var songAuthor = currentMedia.author;
-	// TODO - Recover OP list
-	//$.get(opListPath);// TODO - Make sure this can be executed somehow "iFrame maybe?" (CORS blocks this : https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy)
-	// TODO - Compare OP list with songTitle and songAuthor
-	// TODO - Say if results may match
-	API.chatLog("Still Under Construction", true);
-}
 /**
  * STATS
  */
@@ -126,6 +115,35 @@ if(!getEta){
         }
         API.chatLog("Estimated Time Awaiting : " + nbOfHours + ":" + nbOfMinutes + ":" + nbOfSec, true);
     };
+}
+
+function askCurrentMehs(){
+    var audience = API.getAudience();
+    var atLeastOneMeh = false;
+    for(var i = 0; i < audience.length; i++){
+        var user = audience[i];
+        if(user.vote == -1){
+            API.chatLog(user.username + " mehed this song");
+            atLeastOneMeh = true;
+        }
+    }
+    if(!atLeastOneMeh){
+        API.chatLog("None mehed this song");
+    }
+}
+function askCurrentGrabs(){
+    var audience = API.getAudience();
+    var atLeastOneGrab = false;
+    for(var i = 0; i < audience.length; i++){
+        var user = audience[i];
+        if(user.grab){
+            API.chatLog(user.username + " grabbed this song");
+            atLeastOneGrab = true;
+        }
+    }
+    if(!atLeastOneGrab){
+        API.chatLog("None grabbed this song");
+    }
 }
 
 /**
@@ -471,22 +489,6 @@ function getTooltipLeftPos(buttonNumber){
 function getTooltipTopPos(){
     return getChatHeight() - (getIconHeight() / 2) - sizeAboveChatInput;
 }
-function showAutoWootToolTip(){
-    hideToolTip();
-    var tooltipLeftPos = getTooltipLeftPos(0);
-    var tooltipTopPos = getTooltipTopPos();
-    $("body").append("<div id=\"tooltip\"><span>AutoWoot</span><div class=\"corner\"></div></div>");
-    $("#tooltip").css("left", tooltipLeftPos + "px");
-    $("#tooltip").css("top", tooltipTopPos + "px");
-}
-function showAutoNoticeToolTip(){
-    hideToolTip();
-    var tooltipLeftPos = getTooltipLeftPos(1);
-    var tooltipTopPos = getTooltipTopPos();
-    $("body").append("<div id=\"tooltip\"><span>Mention sound notification</span><div class=\"corner\"></div></div>");
-    $("#tooltip").css("left", tooltipLeftPos + "px");
-    $("#tooltip").css("top", tooltipTopPos + "px");
-}
 function showAutoJoinersLeaversToolTip(){
     hideToolTip();
     var tooltipLeftPos = getTooltipLeftPos(2);
@@ -511,35 +513,21 @@ function showToggleUIToolTip(){
     $("#tooltip").css("left", tooltipLeftPos + "px");
     $("#tooltip").css("top", tooltipTopPos + "px");
 }
-function showOPBtnToolTip(){
+function showMehBtnToolTip(){
 	hideToolTip();
     var tooltipLeftPos = getTooltipLeftPos(5);
     var tooltipTopPos = getTooltipTopPos();
-    $("body").append("<div id=\"tooltip\"><span>OP Song ?</span><div class=\"corner\"></div></div>");
+    $("body").append("<div id=\"tooltip\"><span>Mehs?</span><div class=\"corner\"></div></div>");
     $("#tooltip").css("left", tooltipLeftPos + "px");
     $("#tooltip").css("top", tooltipTopPos + "px");
 }
-function setupAutoWootBtn(){
-    if($("#hybrisAutoWoot").length == 0){
-        $("#hybrisHeader").append("<div id=\"hybrisAutoWoot\" class=\"chat-header-button\"><i class=\"icon icon-woot-disabled\"></i></div>");
-    }
-    $("#hybrisAutoWoot").unbind('click.hybris');
-    $("#hybrisAutoWoot").bind('click.hybris', switchAutoWoot);
-    $("#hybrisAutoWoot").unbind('mouseenter.hybris');
-    $("#hybrisAutoWoot").bind('mouseenter.hybris', showAutoWootToolTip);
-    $("#hybrisAutoWoot").unbind('mouseleave.hybris');
-    $("#hybrisAutoWoot").bind('mouseleave.hybris', hideToolTip);
-}
-function setupAutoNoticeBtn(){
-    if($("#hybrisMention").length == 0){
-        $("#hybrisHeader").append("<div id=\"hybrisMention\" class=\"chat-header-button\"><i class=\"icon icon-chat-sound-on\"></i></div>");
-    }
-    $("#hybrisMention").unbind('click.hybris');
-    $("#hybrisMention").bind('click.hybris', switchAutoNotice);
-    $("#hybrisMention").unbind('mouseenter.hybris');
-    $("#hybrisMention").bind('mouseenter.hybris', showAutoNoticeToolTip);
-    $("#hybrisMention").unbind('mouseleave.hybris');
-    $("#hybrisMention").bind('mouseleave.hybris', hideToolTip);
+function showGrabBtnToolTip(){
+	hideToolTip();
+    var tooltipLeftPos = getTooltipLeftPos(6);
+    var tooltipTopPos = getTooltipTopPos();
+    $("body").append("<div id=\"tooltip\"><span>Grabs?</span><div class=\"corner\"></div></div>");
+    $("#tooltip").css("left", tooltipLeftPos + "px");
+    $("#tooltip").css("top", tooltipTopPos + "px");
 }
 function setupAutoJoinersLeaversBtn(){
     if($("#hybrisJoiners").length == 0){
@@ -574,16 +562,77 @@ function setupUIToggleBtn(){
     $("#hybrisUIToggle").unbind('mouseleave.hybris');
     $("#hybrisUIToggle").bind('mouseleave.hybris', hideToolTip);
 }
-function setupOPBtn(){
-	if($("#hybrisOPBtn").length == 0){
-		$("#hybrisHeader").append("<div id=\"hybrisOPBtn\" class=\"chat-header-button\"><i class=\"icon icon-meh\"></i></div>");
+function setupMehBtn(){
+	if($("#hybrisMehBtn").length == 0){
+		$("#hybrisHeader").append("<div id=\"hybrisMehBtn\" class=\"chat-header-button\"><i class=\"icon icon-meh\"></i></div>");
 	}
-	$("#hybrisOPBtn").unbind('click.hybris');
-	$("#hybrisOPBtn").bind('click.hybris', askCurrentOP);
-    $("#hybrisOPBtn").unbind('mouseenter.hybris');
-    $("#hybrisOPBtn").bind('mouseenter.hybris', showOPBtnToolTip);
-    $("#hybrisOPBtn").unbind('mouseleave.hybris');
-    $("#hybrisOPBtn").bind('mouseleave.hybris', hideToolTip);
+	$("#hybrisMehBtn").unbind('click.hybris');
+	$("#hybrisMehBtn").bind('click.hybris', askCurrentMehs);
+    $("#hybrisMehBtn").unbind('mouseenter.hybris');
+    $("#hybrisMehBtn").bind('mouseenter.hybris', showMehBtnToolTip);
+    $("#hybrisMehBtn").unbind('mouseleave.hybris');
+    $("#hybrisMehBtn").bind('mouseleave.hybris', hideToolTip);
+}
+function setupGrabBtn(){
+	if($("#hybrisGrabBtn").length == 0){
+		$("#hybrisHeader").append("<div id=\"hybrisGrabBtn\" class=\"chat-header-button\"><i class=\"icon icon-grab\"></i></div>");
+	}
+	$("#hybrisGrabBtn").unbind('click.hybris');
+	$("#hybrisGrabBtn").bind('click.hybris', askCurrentGrabs);
+    $("#hybrisGrabBtn").unbind('mouseenter.hybris');
+    $("#hybrisGrabBtn").bind('mouseenter.hybris', showGrabBtnToolTip);
+    $("#hybrisGrabBtn").unbind('mouseleave.hybris');
+    $("#hybrisGrabBtn").bind('mouseleave.hybris', hideToolTip);
+}
+function createButton(htmlId, htmlClass, clickFunction, toolTipInfo, buttonNumber){
+    var newButton = new Button(htmlId, htmlClass, clickFunction, toolTipInfo);
+    newButton.setNumber(buttonNumber);
+    // TODO - Integrate all this in the constructor
+    if($("#"+htmlId).length == 0){
+        $("#hybrisHeader").append("<div id=\"" + htmlId + "\" class=\"chat-header-button\"><i class=\"icon " + htmlClass + "\"></i></div>");
+    }
+    $("#"+htmlId).unbind('click.hybris');
+    $("#"+htmlId).bind('click.hybris', clickFunction);
+    $("#"+htmlId).unbind('mouseenter.hybris');
+    $("#"+htmlId).bind('mouseenter.hybris', function(){
+        hideToolTip();
+        var tooltipLeftPos = getTooltipLeftPos(buttonNumber);
+        var tooltipTopPos = getTooltipTopPos();
+        $("body").append("<div id=\"tooltip\"><span>" + toolTipInfo + "</span><div class=\"corner\"></div></div>");
+        $("#tooltip").css("left", tooltipLeftPos + "px");
+        $("#tooltip").css("top", tooltipTopPos + "px");
+    });
+    $("#"+htmlId).unbind('mouseleave.hybris');
+    $("#"+htmlId).bind('mouseleave.hybris', hideToolTip);
+    return newButton;
+}
+function updateButton(existingButton, htmlId, htmlClass, clickFunction, toolTipInfo){
+    // TODO - Update the button without removing it
+}
+var buttonsLibrary;
+if(!buttonsLibrary){
+    buttonsLibrary = new Map();
+}
+function Button(htmlId, htmlClass, clickFunction, toolTipInfo){
+    this.htmlId = htmlId;
+    this.htmlClass = htmlClass;
+    this.clickFunction = clickFunction;
+    this.toolTipInfo = toolTipInfo;
+    
+    Button.prototype.setNumber = function(number){
+        this.number = number;
+    };
+}
+function setupButton(htmlId, htmlClass, clickFunction, toolTipInfo){
+    if(buttonsLibrary.has(htmlId)){
+        var button = buttonsLibrary[htmlId];
+        button = updateButton(button, htmlId, htmlClass, clickFunction, toolTipInfo);
+        buttonsLibrary.set(htmlId, button);
+    }else{
+        var newButton = buttonsLibrary.size;
+        var button = createButton(htmlId, htmlClass, clickFunction, toolTipInfo, newButton);
+        buttonsLibrary.set(htmlId, button);
+    }
 }
 var alreadyMovedSuggestion;
 function setupHybrisToolBar(){
@@ -621,14 +670,13 @@ function setupHybrisToolBar(){
     $("#hybrisHeader").css("bottom", "0px");
     $("#hybrisHeader").css("left", hybrisHeaderLeftPos + "px");
     $("#hybrisHeader").css("width", "100%");
-	setupAutoWootBtn();
-	setupAutoNoticeBtn();
+    setupButton("hybrisAutoWoot", "icon-woot-disabled", switchAutoWoot, "AutoWoot");
+    setupButton("hybrisMention", "icon-chat-sound-on", switchAutoNotice, "Mention sound notification");
 	setupAutoJoinersLeaversBtn();
 	setupEtaBtn();
     setupUIToggleBtn();
-	if(isInChill()){
-		setupOPBtn();
-	}
+	setupMehBtn();
+    setupGrabBtn();
     $("#hybrisHeader").slideDown();
 }
 /**
