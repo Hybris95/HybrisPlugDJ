@@ -489,112 +489,44 @@ function getTooltipLeftPos(buttonNumber){
 function getTooltipTopPos(){
     return getChatHeight() - (getIconHeight() / 2) - sizeAboveChatInput;
 }
-function showAutoJoinersLeaversToolTip(){
-    hideToolTip();
-    var tooltipLeftPos = getTooltipLeftPos(2);
-    var tooltipTopPos = getTooltipTopPos();
-    $("body").append("<div id=\"tooltip\"><span>Joiners/Leavers notification</span><div class=\"corner\"></div></div>");
-    $("#tooltip").css("left", tooltipLeftPos + "px");
-    $("#tooltip").css("top", tooltipTopPos + "px");
+var buttonsLibrary;
+if(!buttonsLibrary){
+    buttonsLibrary = new Map();
 }
-function showEtaToolTip(){
-    hideToolTip();
-    var tooltipLeftPos = getTooltipLeftPos(3);
-    var tooltipTopPos = getTooltipTopPos();
-    $("body").append("<div id=\"tooltip\"><span>Give ETA</span><div class=\"corner\"></div></div>");
-    $("#tooltip").css("left", tooltipLeftPos + "px");
-    $("#tooltip").css("top", tooltipTopPos + "px");
-}
-function showToggleUIToolTip(){
-    hideToolTip();
-    var tooltipLeftPos = getTooltipLeftPos(4);
-    var tooltipTopPos = getTooltipTopPos();
-    $("body").append("<div id=\"tooltip\"><span>Hide User Interface</span><div class=\"corner\"></div></div>");
-    $("#tooltip").css("left", tooltipLeftPos + "px");
-    $("#tooltip").css("top", tooltipTopPos + "px");
-}
-function showMehBtnToolTip(){
-	hideToolTip();
-    var tooltipLeftPos = getTooltipLeftPos(5);
-    var tooltipTopPos = getTooltipTopPos();
-    $("body").append("<div id=\"tooltip\"><span>Mehs?</span><div class=\"corner\"></div></div>");
-    $("#tooltip").css("left", tooltipLeftPos + "px");
-    $("#tooltip").css("top", tooltipTopPos + "px");
-}
-function showGrabBtnToolTip(){
-	hideToolTip();
-    var tooltipLeftPos = getTooltipLeftPos(6);
-    var tooltipTopPos = getTooltipTopPos();
-    $("body").append("<div id=\"tooltip\"><span>Grabs?</span><div class=\"corner\"></div></div>");
-    $("#tooltip").css("left", tooltipLeftPos + "px");
-    $("#tooltip").css("top", tooltipTopPos + "px");
-}
-function setupAutoJoinersLeaversBtn(){
-    if($("#hybrisJoiners").length == 0){
-        $("#hybrisHeader").append("<div id=\"hybrisJoiners\" class=\"chat-header-button\"><i class=\"icon icon-ignore\"></i></div>");
+function Button(htmlId, htmlClass, clickFunction, toolTipInfo, buttonNumber){
+    this.htmlId = htmlId;
+    this.htmlClass = htmlClass;
+    this.number = buttonNumber;
+    
+    if($("#"+this.htmlId).length == 0){
+        $("#hybrisHeader").append("<div id=\"" + this.htmlId + "\" class=\"chat-header-button\"><i class=\"icon " + this.htmlClass + "\"></i></div>");
     }
-    $("#hybrisJoiners").unbind('click.hybris');
-    $("#hybrisJoiners").bind('click.hybris', switchAutoNoticeJoinersLeavers);
-    $("#hybrisJoiners").unbind('mouseenter.hybris');
-    $("#hybrisJoiners").bind('mouseenter.hybris', showAutoJoinersLeaversToolTip);
-    $("#hybrisJoiners").unbind('mouseleave.hybris');
-    $("#hybrisJoiners").bind('mouseleave.hybris', hideToolTip);
+    this.updateClick(clickFunction);
+    this.updateToolTip(toolTipInfo);
+    $("#"+this.htmlId).unbind('mouseleave.hybris');
+    $("#"+this.htmlId).bind('mouseleave.hybris', hideToolTip);
 }
-function setupEtaBtn(){
-    if($("#hybrisEta").length == 0){
-        $("#hybrisHeader").append("<div id=\"hybrisEta\" class=\"chat-header-button\"><i class=\"icon icon-history-white\"></i></div>");
+
+Button.prototype.updateClass = function(htmlClass){
+    var icon = $("#" + this.htmlId + " i");
+    if(icon.length > 0){
+        icon[0].className = "icon " + htmlClass;
+        this.htmlClass = htmlClass;
     }
-    $("#hybrisEta").unbind('click.hybris');
-    $("#hybrisEta").bind('click.hybris', getEta);
-    $("#hybrisEta").unbind('mouseenter.hybris');
-    $("#hybrisEta").bind('mouseenter.hybris', showEtaToolTip);
-    $("#hybrisEta").unbind('mouseleave.hybris');
-    $("#hybrisEta").bind('mouseleave.hybris', hideToolTip);
-}
-function setupUIToggleBtn(){
-    if($("#hybrisUIToggle").length == 0){
-        $("#hybrisHeader").append("<div id =\"hybrisUIToggle\" class=\"chat-header-button\"><i class=\"icon icon-logout-white\"></i></div>");
-    }
-    $("#hybrisUIToggle").unbind('click.hybris');
-    $("#hybrisUIToggle").bind('click.hybris', switchAutoHUI);
-    $("#hybrisUIToggle").unbind('mouseenter.hybris');
-    $("#hybrisUIToggle").bind('mouseenter.hybris', showToggleUIToolTip);
-    $("#hybrisUIToggle").unbind('mouseleave.hybris');
-    $("#hybrisUIToggle").bind('mouseleave.hybris', hideToolTip);
-}
-function setupMehBtn(){
-	if($("#hybrisMehBtn").length == 0){
-		$("#hybrisHeader").append("<div id=\"hybrisMehBtn\" class=\"chat-header-button\"><i class=\"icon icon-meh\"></i></div>");
-	}
-	$("#hybrisMehBtn").unbind('click.hybris');
-	$("#hybrisMehBtn").bind('click.hybris', askCurrentMehs);
-    $("#hybrisMehBtn").unbind('mouseenter.hybris');
-    $("#hybrisMehBtn").bind('mouseenter.hybris', showMehBtnToolTip);
-    $("#hybrisMehBtn").unbind('mouseleave.hybris');
-    $("#hybrisMehBtn").bind('mouseleave.hybris', hideToolTip);
-}
-function setupGrabBtn(){
-	if($("#hybrisGrabBtn").length == 0){
-		$("#hybrisHeader").append("<div id=\"hybrisGrabBtn\" class=\"chat-header-button\"><i class=\"icon icon-grab\"></i></div>");
-	}
-	$("#hybrisGrabBtn").unbind('click.hybris');
-	$("#hybrisGrabBtn").bind('click.hybris', askCurrentGrabs);
-    $("#hybrisGrabBtn").unbind('mouseenter.hybris');
-    $("#hybrisGrabBtn").bind('mouseenter.hybris', showGrabBtnToolTip);
-    $("#hybrisGrabBtn").unbind('mouseleave.hybris');
-    $("#hybrisGrabBtn").bind('mouseleave.hybris', hideToolTip);
-}
-function createButton(htmlId, htmlClass, clickFunction, toolTipInfo, buttonNumber){
-    var newButton = new Button(htmlId, htmlClass, clickFunction, toolTipInfo);
-    newButton.setNumber(buttonNumber);
-    // TODO - Integrate all this in the constructor
-    if($("#"+htmlId).length == 0){
-        $("#hybrisHeader").append("<div id=\"" + htmlId + "\" class=\"chat-header-button\"><i class=\"icon " + htmlClass + "\"></i></div>");
-    }
-    $("#"+htmlId).unbind('click.hybris');
-    $("#"+htmlId).bind('click.hybris', clickFunction);
-    $("#"+htmlId).unbind('mouseenter.hybris');
-    $("#"+htmlId).bind('mouseenter.hybris', function(){
+};
+
+Button.prototype.updateClick = function(clickFunction){
+    var button = $("#" + this.htmlId);
+    button.unbind('click.hybris');
+    button.bind('click.hybris', clickFunction);
+    this.clickFunction = clickFunction;
+};
+
+Button.prototype.updateToolTip = function(toolTipInfo){
+    var buttonNumber = this.number;
+    var button = $("#" + this.htmlId);
+    button.unbind('mouseenter.hybris');
+    button.bind('mouseenter.hybris', function(){
         hideToolTip();
         var tooltipLeftPos = getTooltipLeftPos(buttonNumber);
         var tooltipTopPos = getTooltipTopPos();
@@ -602,35 +534,17 @@ function createButton(htmlId, htmlClass, clickFunction, toolTipInfo, buttonNumbe
         $("#tooltip").css("left", tooltipLeftPos + "px");
         $("#tooltip").css("top", tooltipTopPos + "px");
     });
-    $("#"+htmlId).unbind('mouseleave.hybris');
-    $("#"+htmlId).bind('mouseleave.hybris', hideToolTip);
-    return newButton;
-}
-function updateButton(existingButton, htmlId, htmlClass, clickFunction, toolTipInfo){
-    // TODO - Update the button without removing it
-}
-var buttonsLibrary;
-if(!buttonsLibrary){
-    buttonsLibrary = new Map();
-}
-function Button(htmlId, htmlClass, clickFunction, toolTipInfo){
-    this.htmlId = htmlId;
-    this.htmlClass = htmlClass;
-    this.clickFunction = clickFunction;
     this.toolTipInfo = toolTipInfo;
-    
-    Button.prototype.setNumber = function(number){
-        this.number = number;
-    };
-}
+};
 function setupButton(htmlId, htmlClass, clickFunction, toolTipInfo){
     if(buttonsLibrary.has(htmlId)){
         var button = buttonsLibrary[htmlId];
-        button = updateButton(button, htmlId, htmlClass, clickFunction, toolTipInfo);
-        buttonsLibrary.set(htmlId, button);
+        button.updateClass(htmlClass);
+        button.updateClick(clickFunction);
+        button.updateToolTip(toolTipInfo);
     }else{
-        var newButton = buttonsLibrary.size;
-        var button = createButton(htmlId, htmlClass, clickFunction, toolTipInfo, newButton);
+        var buttonNumber = buttonsLibrary.size;
+        var button = new Button(htmlId, htmlClass, clickFunction, toolTipInfo, buttonNumber);
         buttonsLibrary.set(htmlId, button);
     }
 }
@@ -672,11 +586,11 @@ function setupHybrisToolBar(){
     $("#hybrisHeader").css("width", "100%");
     setupButton("hybrisAutoWoot", "icon-woot-disabled", switchAutoWoot, "AutoWoot");
     setupButton("hybrisMention", "icon-chat-sound-on", switchAutoNotice, "Mention sound notification");
-	setupAutoJoinersLeaversBtn();
-	setupEtaBtn();
-    setupUIToggleBtn();
-	setupMehBtn();
-    setupGrabBtn();
+    setupButton("hybrisJoiners", "icon-ignore", switchAutoNoticeJoinersLeavers, "Joiners/Leavers notification");
+    setupButton("hybrisEta", "icon-history-white", getEta, "Give ETA");
+    setupButton("hybrisUIToggle", "icon-logout-white", switchAutoHUI, "Hide User Interface");
+    setupButton("hybrisMehBtn", "icon-meh", askCurrentMehs, "Mehs?");
+    setupButton("hybrisGrabBtn", "icon-grab", askCurrentGrabs, "Grabs?");
     $("#hybrisHeader").slideDown();
 }
 /**
