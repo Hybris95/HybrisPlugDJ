@@ -20,6 +20,16 @@ Copyright © 2014 Christian BUISSON
     along with this program; if not, write to the Free Software Foundation,
     Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
+Features
+--------
+* AutoWoot (Toggle Button)
+* Mention sounds (Toggle Button)
+* Joiners/Leavers notification (Toggle Button)
+* Get the Estimated Time Awaited (from current position or globally if not joined)
+* AutoHide the User Interface (Toggle Button)
+* Get the names of people who Mehed the current song
+* Get the names of people who Grabbed the current song
+
 How to use
 ----------
 Copy/paste the script into the Console of your WebBrowser
