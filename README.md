@@ -44,10 +44,6 @@ Then search for "security.mixed_content.block_active_content".
 
 And set it to false (by double clicking on it).
 
-Warning
--------
-Use autoAnswer and autoRaffle at your own risks, these issues should be fixed soon by Matthew and were developped for tests purposes.
-
 TODO
 ----
 Create a tag in the webpage for the audio instead of using mixed_content in javascript.
