@@ -118,31 +118,39 @@ if(!getEta){
 }
 
 function askCurrentMehs(){
+    var media = API.getMedia();
+    var author = media.author;
+    var title = media.title;
     var audience = API.getAudience();
     var atLeastOneMeh = false;
+    API.chatLog("[Mehs] " + author + " - " + title, true);
     for(var i = 0; i < audience.length; i++){
         var user = audience[i];
         if(user.vote == -1){
-            API.chatLog(user.username + " mehed this song");
+            API.chatLog(user.username + " mehed");
             atLeastOneMeh = true;
         }
     }
     if(!atLeastOneMeh){
-        API.chatLog("None mehed this song");
+        API.chatLog("Nobody mehed");
     }
 }
 function askCurrentGrabs(){
+    var media = API.getMedia();
+    var author = media.author;
+    var title = media.title;
     var audience = API.getAudience();
     var atLeastOneGrab = false;
+    API.chatLog("[Grabs] " + author + " - " + title, true);
     for(var i = 0; i < audience.length; i++){
         var user = audience[i];
         if(user.grab){
-            API.chatLog(user.username + " grabbed this song");
+            API.chatLog(user.username + " grabbed");
             atLeastOneGrab = true;
         }
     }
     if(!atLeastOneGrab){
-        API.chatLog("None grabbed this song");
+        API.chatLog("Nobody grabbed");
     }
 }
 
