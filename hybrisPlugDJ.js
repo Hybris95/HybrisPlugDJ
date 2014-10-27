@@ -200,15 +200,9 @@ function woot() {
 function canAutoJoin(){
     return isInEDT() || isInTasty();
 }
-function join() {// TODO - Make it autojoin if a spot becomes free
+function join() {
     if(canAutoJoin()){
-        if(API.getDJ().id != API.getUser().id)
-        {
-            if(API.getWaitListPosition() == -1)
-            {
-                $("#dj-button").click();
-            }
-        }
+        API.djJoin();
     }
 }
 
@@ -362,6 +356,16 @@ if(!someoneLeft){
     	}
     };
 }
+
+var waitListUpdateHookedOnApi;
+var waitListUpdate;
+if(!waitListUpdate){
+    waitListUpdate = function(newWaitList){
+        if(autoJ){
+            join();
+        }
+    };
+}
 /**
  * CHAT EVENT :
  * AutoNotice Only -> http://pastebin.com/Hsi2YMDH
@@ -412,6 +416,11 @@ function refreshAPIStatus()
         API.on(API.USER_JOIN, someoneJoined);
         API.on(API.USER_LEAVE, someoneLeft);
         autoJoinLeaveHookedOnApi = true;
+    }
+    
+    if(!waitListUpdateHookedOnApi){
+        API.on(API.WAIT_LIST_UPDATE, waitListUpdate);
+        waitListUpdateHookedOnApi = true;
     }
 }
 function startAutoWoot(){
@@ -542,7 +551,6 @@ function getButtonWidth(){
 }
 var hybrisHeaderHeight = 46;
 var hybrisHeaderLeftPadding = 10;
-var nbOfBorders = 2;
 var sizeAboveChatInput = 10;
 function hideToolTip(){
 	$("#tooltip").remove();
