@@ -484,7 +484,7 @@ function getButtonWidth(){
     return getIconWidth() + marginRight;
 }
 var hybrisHeaderHeight = 46;
-var hybrisHeaderLeftPos = 10;
+var hybrisHeaderLeftPadding = 10;
 var nbOfBorders = 2;
 var sizeAboveChatInput = 10;
 function hideToolTip(){
@@ -492,10 +492,14 @@ function hideToolTip(){
 }
 function getTooltipLeftPos(buttonNumber){
     var nbButtons = buttonNumber * getButtonWidth();
-    return getAppWidth() - getChatWidth() + hybrisHeaderLeftPos + nbButtons + (getIconWidth() / 2);
+    return hybrisHeaderLeftPadding + nbButtons + (getIconWidth() / 2);
 }
 function getTooltipTopPos(){
-    return getChatHeight() - (getIconHeight() / 2) - sizeAboveChatInput;
+    var hybrisHeader = $("#hybrisHeader");
+    var topString = hybrisHeader.css("top");
+    topString = topString.substring(0, topString.length - 2);
+    var topInt = parseInt(topString);
+    return topInt - (getIconHeight() / 2) - sizeAboveChatInput;
 }
 var buttonsLibrary;
 if(!buttonsLibrary){
@@ -507,7 +511,7 @@ function Button(htmlId, htmlClass, clickFunction, toolTipInfo, buttonNumber){
     this.number = buttonNumber;
     
     if($("#"+this.htmlId).length == 0){
-        $("#hybrisHeader").append("<div id=\"" + this.htmlId + "\" class=\"chat-header-button\"><i class=\"icon " + this.htmlClass + "\"></i></div>");
+        $("#hybrisButtonsContainer").append("<div id=\"" + this.htmlId + "\" class=\"chat-header-button\"><i class=\"icon " + this.htmlClass + "\"></i></div>");
     }
     this.updateClick(clickFunction);
     this.updateToolTip(toolTipInfo);
@@ -556,42 +560,32 @@ function setupButton(htmlId, htmlClass, clickFunction, toolTipInfo){
         buttonsLibrary.set(htmlId, button);
     }
 }
-var alreadyMovedSuggestion;
+var buttonMarginRight = 19;// TODO - Calculate automatically from chat-header-button class
+var buttonWidth = 30;// TODO - Calculate automatically from chat-header-button class
 function setupHybrisToolBar(){
-	var chatHeight = getChatHeight();
-	var chatHeaderHeight = getChatHeaderHeight();
-	var chatInputHeight = getChatInputHeight();
-	
-	var newChatMessagesHeight = chatHeight - chatHeaderHeight - chatInputHeight - hybrisHeaderHeight - nbOfBorders - sizeAboveChatInput;
-	
-	if(!alreadyMovedSuggestion){
-		var suggestionBottom = $("#chat-suggestion").css("bottom");
-		suggestionBottom = suggestionBottom.substring(0, suggestionBottom.length - 2);
-		suggestionBottom = parseInt(suggestionBottom);
-		$("#chat-suggestion").css("bottom", suggestionBottom + hybrisHeaderHeight);
-		alreadyMovedSuggestion = true;
-	}
-
-    var currentMessagesHeight = $("#chat-messages").height();
-    if(currentMessagesHeight != newChatMessagesHeight){
-        $("#chat-messages").fadeOut("fast").promise().done(function(){
-            $("#chat-messages").css("height", newChatMessagesHeight + "px");
-            $("#chat-messages").fadeIn("slow");
-        });
-        $("#chat-input").fadeOut("fast").promise().done(function(){
-            $("#chat-input").css("bottom", hybrisHeaderHeight + "px");
-            $("#chat-input").fadeIn("slow");
-        });
+    var hybrisHeader = $("#hybrisHeader");
+    if(hybrisHeader.length == 0){
+        $("#room").append("<div id=\"hybrisHeader\"></div>");
+        hybrisHeader = $("#hybrisHeader");
     }
-    if($("#hybrisHeader").length == 0){
-        $("#chat").append("<div id=\"hybrisHeader\"><div class=\"divider\" /></div>");
+    hybrisHeader.hide();
+    hybrisHeader.css("position", "absolute");
+    var djbuttonTopString = $("#dj-button").css("top");
+    djbuttonTopString = djbuttonTopString.substring(0, djbuttonTopString.length - 2);
+    var djbuttonTopInt = parseInt(djbuttonTopString);
+    hybrisHeader.css("top", (djbuttonTopInt - 50) + "px");
+    hybrisHeader.css("z-index", 9);
+    hybrisHeader.css("background-color", "#282C35");
+    hybrisHeader.css("padding-left", hybrisHeaderLeftPadding + "px");
+    hybrisHeader.css("border-top-right-radius", "4px");
+    hybrisHeader.css("border-bottom-right-radius", "4px");
+    
+    var hybrisButtonsContainer = $("#hybrisButtonsContainer");
+    if(hybrisButtonsContainer.length == 0){
+        hybrisHeader.append("<div id=\"hybrisButtonsContainer\" />");
+        hybrisButtonsContainer = $("#hybrisButtonsContainer");
     }
-    $("#hybrisHeader").hide();
-    $("#hybrisHeader").css("position", "absolute");
-    $("#hybrisHeader").css("height", hybrisHeaderHeight + "px");
-    $("#hybrisHeader").css("bottom", "0px");
-    $("#hybrisHeader").css("left", hybrisHeaderLeftPos + "px");
-    $("#hybrisHeader").css("width", "100%");
+    
     setupButton("hybrisAutoWoot", "icon-woot-disabled", switchAutoWoot, "AutoWoot");
     setupButton("hybrisMention", "icon-chat-sound-on", switchAutoNotice, "Mention sound notification");
     setupButton("hybrisJoiners", "icon-ignore", switchAutoNoticeJoinersLeavers, "Joiners/Leavers notification");
@@ -599,7 +593,36 @@ function setupHybrisToolBar(){
     setupButton("hybrisUIToggle", "icon-logout-white", switchAutoHUI, "Hide User Interface");
     setupButton("hybrisMehBtn", "icon-meh", askCurrentMehs, "Mehs?");
     setupButton("hybrisGrabBtn", "icon-grab", askCurrentGrabs, "Grabs?");
-    $("#hybrisHeader").slideDown();
+    hybrisHeader.css("height", hybrisHeaderHeight + "px");
+    
+    var toggleHybrisBar = $("#toggleHybrisBar");
+    if(toggleHybrisBar.length == 0){
+        hybrisHeader.append("<div id=\"toggleHybrisBar\"><i class=\"icon icon-next-track\" /></div>");
+        toggleHybrisBar = $("#toggleHybrisBar");
+    }
+    toggleHybrisBar.css("background-color", "#282C35");
+    toggleHybrisBar.css("position", "relative");
+    toggleHybrisBar.css("top", "8px");
+    toggleHybrisBar.css("width", "30px");
+    toggleHybrisBar.css("height", "30px");
+    toggleHybrisBar.css("float", "left");
+    toggleHybrisBar.css("border-left", "1px solid black");
+    toggleHybrisBar.unbind('click.hybris');
+    toggleHybrisBar.bind('click.hybris', function(){
+        var toggleHybrisBar = $("#toggleHybrisBar");
+        var buttonContainer = $("#hybrisButtonsContainer");
+        var nbButtons = buttonsLibrary.size;
+        buttonContainer.toggle();
+        if(buttonContainer.css("display") == "block"){
+            $("#hybrisHeader").css("width", ((nbButtons * buttonMarginRight) + (nbButtons * buttonWidth) + toggleHybrisBar.width() + 1) + "px");
+        }else{
+            $("#hybrisHeader").css("width", (toggleHybrisBar.width() + 1) + "px");
+        }
+    });
+    
+    var nbButtons = buttonsLibrary.size;
+    hybrisHeader.css("width", ((nbButtons * buttonMarginRight) + (nbButtons * buttonWidth) + toggleHybrisBar.width() + 1) + "px");
+    hybrisHeader.slideDown();
 }
 /**
  * Main function (executed at loading)
