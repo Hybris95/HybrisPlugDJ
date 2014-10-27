@@ -69,6 +69,12 @@ function isInEDT(){
     return window.location.pathname == "/edtentertainment";
 }
 /**
+ * Tastycat features
+ */
+function isInTasty(){
+    return window.location.pathname == "/tastycat";
+}
+/**
  * STATS
  */
 var getMeanDuration;// TODO - Include this in the Advance event and implement our own history
@@ -191,12 +197,17 @@ function woot() {
     $("#woot").click();
 }
 
-function join() {
-    if(API.getDJ().id != API.getUser().id)
-    {
-        if(API.getWaitListPosition() == -1)
+function canAutoJoin(){
+    return isInEDT() || isInTasty();
+}
+function join() {// TODO - Make it autojoin if a spot becomes free
+    if(canAutoJoin()){
+        if(API.getDJ().id != API.getUser().id)
         {
-            $("#dj-button").click();
+            if(API.getWaitListPosition() == -1)
+            {
+                $("#dj-button").click();
+            }
         }
     }
 }
@@ -633,7 +644,7 @@ function setupHybrisToolBar(){
     }
     
     setupButton("hybrisAutoWoot", "icon-woot-disabled", switchAutoWoot, "AutoWoot");
-    if(isInEDT()){
+    if(canAutoJoin()) {
         setupButton("hybrisAutoJoin", "icon-about-white", switchAutoJoin, "AutoJoin");
     }
     setupButton("hybrisMention", "icon-chat-sound-on", switchAutoNotice, "Mention sound notification");
