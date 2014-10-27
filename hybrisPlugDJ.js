@@ -53,11 +53,20 @@ var autoJoinLeaveNotice;
 var changedAutoHUI;
 var autoHUI;
 
+var changedAutoJ;
+var autoJ;
+
 /**
  * Just a chill room features
  */
 function isInChill(){
 	return window.location.pathname == "/new-to-this-shit-mrsuicidesheep";
+}
+/**
+ * Electro, Dubstep & Techno features
+ */
+function isInEDT(){
+    return window.location.pathname == "/edtentertainment";
 }
 /**
  * STATS
@@ -171,11 +180,25 @@ if(!advanceFunction){
         if(autoW){
             woot();
         }
+        
+        if(autoJ){
+            join();
+        }
     };
 }
 
 function woot() {
     $("#woot").click();
+}
+
+function join() {
+    if(API.getDJ().id != API.getUser().id)
+    {
+        if(API.getWaitListPosition() == -1)
+        {
+            $("#dj-button").click();
+        }
+    }
 }
 
 var videoHeight;
@@ -311,7 +334,7 @@ var autoJoinLeaveHookedOnApi;
 var someoneJoined;
 if(!someoneJoined){
     someoneJoined = function(user){
-    	if(autoJoinLeaveNotice) {
+    	if((autoJoinLeaveNotice == 1) || (autoJoinLeaveNotice == 2 && user.role > 0)) {
             API.chatLog(user.username + " joined the room", true);
     	}
     };
@@ -323,7 +346,7 @@ if(!someoneJoined){
 var someoneLeft;
 if(!someoneLeft){
     someoneLeft = function(user){
-    	if(autoJoinLeaveNotice) {
+    	if((autoJoinLeaveNotice == 1) || (autoJoinLeaveNotice == 2 && user.role > 0)) {
             API.chatLog(user.username + " left the room", false);
     	}
     };
@@ -414,8 +437,12 @@ function switchAutoNotice(){
 	}
 }
 function startAutoNoticeJoinersLeavers(){
-    autoJoinLeaveNotice = true;
+    autoJoinLeaveNotice = 1;
     $("#hybrisJoiners").css("background-color", "#105D2F");
+}
+function filterAutoNoticeJoinersLeavers(){
+    autoJoinLeaveNotice = 2;
+    $("#hybrisJoiners").css("background-color", "#102F5D");
 }
 function stopAutoNoticeJoinersLeavers(){
     autoJoinLeaveNotice = false;
@@ -423,7 +450,9 @@ function stopAutoNoticeJoinersLeavers(){
 }
 function switchAutoNoticeJoinersLeavers(){
     changedAutoJoinLeaveNotice = true;
-    if(autoJoinLeaveNotice){
+    if(autoJoinLeaveNotice == 1){
+        filterAutoNoticeJoinersLeavers();
+    }else if(autoJoinLeaveNotice == 2){
         stopAutoNoticeJoinersLeavers();
     }else{
         startAutoNoticeJoinersLeavers();
@@ -445,6 +474,23 @@ function switchAutoHUI(){
         startAutoHUI();
     }else{
         stopAutoHUI();
+    }
+}
+function startAutoJoin(){
+    autoJ = true;
+    $("#hybrisAutoJoin").css("background-color", "#105D2F");
+    join();
+}
+function stopAutoJoin(){
+    autoJ = false;
+    $("#hybrisAutoJoin").css("background-color", "#5D102F");
+}
+function switchAutoJoin(){
+    changedAutoJ = true;
+    if(autoJ){
+        stopAutoJoin();
+    }else{
+        startAutoJoin();
     }
 }
 /**
@@ -587,6 +633,9 @@ function setupHybrisToolBar(){
     }
     
     setupButton("hybrisAutoWoot", "icon-woot-disabled", switchAutoWoot, "AutoWoot");
+    if(isInEDT()){
+        setupButton("hybrisAutoJoin", "icon-about-white", switchAutoJoin, "AutoJoin");
+    }
     setupButton("hybrisMention", "icon-chat-sound-on", switchAutoNotice, "Mention sound notification");
     setupButton("hybrisJoiners", "icon-ignore", switchAutoNoticeJoinersLeavers, "Joiners/Leavers notification");
     setupButton("hybrisUIToggle", "icon-logout-white", switchAutoHUI, "Hide User Interface");
@@ -690,6 +739,16 @@ function main(){
         }
     }else{
         stopAutoHUI();
+    }
+    
+    if(changedAutoJ){
+        if(autoJ){
+            startAutoJoin();
+        }else{
+            stopAutoJoin();
+        }
+    }else{
+        stopAutoJoin();
     }
 }
 $(document).ready(main);
