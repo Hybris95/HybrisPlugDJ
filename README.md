@@ -23,8 +23,9 @@ Copyright © 2014 Christian BUISSON
 Features
 --------
 * AutoWoot (Toggle Button)
+* AutoJoin (Toggle Button) only on specific rooms (room moderators have to ask me to be implemented)
 * Mention sounds (Toggle Button)
-* Joiners/Leavers notification (Toggle Button)
+* Joiners/Leavers notification (Toggle Button) - Green = Everyone, Blue = Moderators Only
 * Get the Estimated Time Awaited (from current position or globally if not joined)
 * AutoHide the User Interface (Toggle Button)
 * Get the names of people who Mehed the current song
