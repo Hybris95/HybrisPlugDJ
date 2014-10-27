@@ -589,8 +589,8 @@ function setupHybrisToolBar(){
     setupButton("hybrisAutoWoot", "icon-woot-disabled", switchAutoWoot, "AutoWoot");
     setupButton("hybrisMention", "icon-chat-sound-on", switchAutoNotice, "Mention sound notification");
     setupButton("hybrisJoiners", "icon-ignore", switchAutoNoticeJoinersLeavers, "Joiners/Leavers notification");
-    setupButton("hybrisEta", "icon-history-white", getEta, "Give ETA");
     setupButton("hybrisUIToggle", "icon-logout-white", switchAutoHUI, "Hide User Interface");
+    setupButton("hybrisEta", "icon-history-white", getEta, "ETA?");
     setupButton("hybrisMehBtn", "icon-meh", askCurrentMehs, "Mehs?");
     setupButton("hybrisGrabBtn", "icon-grab", askCurrentGrabs, "Grabs?");
     hybrisHeader.css("height", hybrisHeaderHeight + "px");
@@ -607,17 +607,38 @@ function setupHybrisToolBar(){
     toggleHybrisBar.css("height", "30px");
     toggleHybrisBar.css("float", "left");
     toggleHybrisBar.css("border-left", "1px solid black");
+    toggleHybrisBar.css("cursor", "pointer");
     toggleHybrisBar.unbind('click.hybris');
     toggleHybrisBar.bind('click.hybris', function(){
         var toggleHybrisBar = $("#toggleHybrisBar");
         var buttonContainer = $("#hybrisButtonsContainer");
         var nbButtons = buttonsLibrary.size;
-        buttonContainer.toggle();
+        buttonContainer.toggle();// TODO - Add an animation on the toggle to make it slide left/right
         if(buttonContainer.css("display") == "block"){
             $("#hybrisHeader").css("width", ((nbButtons * buttonMarginRight) + (nbButtons * buttonWidth) + toggleHybrisBar.width() + 1) + "px");
         }else{
             $("#hybrisHeader").css("width", (toggleHybrisBar.width() + 1) + "px");
         }
+    });
+    toggleHybrisBar.unbind('mouseleave.hybris');
+    toggleHybrisBar.bind('mouseleave.hybris', hideToolTip);
+    toggleHybrisBar.unbind('mouseenter.hybris');
+    toggleHybrisBar.bind('mouseenter.hybris', function(){
+        hideToolTip();
+        var buttonContainer = $("#hybrisButtonsContainer");
+        var tooltipTopPos = getTooltipTopPos();
+        var tooltipLeftPos = 0;
+        var tooltipText = "";
+        if(buttonContainer.css("display") == "block"){
+            tooltipLeftPos = getTooltipLeftPos(buttonsLibrary.size);
+            tooltipText = "Hide Hybris Toolbar";
+        }else{
+            tooltipLeftPos = getTooltipLeftPos(0);
+            tooltipText = "Show Hybris Toolbar";
+        }
+        $("body").append("<div id=\"tooltip\"><span>" + tooltipText + "</span><div class=\"corner\"></div></div>");
+        $("#tooltip").css("left", tooltipLeftPos + "px");
+        $("#tooltip").css("top", tooltipTopPos + "px");
     });
     
     var nbButtons = buttonsLibrary.size;
