@@ -625,8 +625,13 @@ function setupButton(htmlId, htmlClass, clickFunction, toolTipInfo){
         buttonsLibrary.set(htmlId, button);
     }
 }
-var buttonMarginRight = 19;// TODO - Calculate automatically from chat-header-button class
-var buttonWidth = 30;// TODO - Calculate automatically from chat-header-button class
+var buttonMarginRight;
+if(!buttonMarginRight){
+    var str = $(".chat-header-button").css("margin-right");
+    str = str.substring(0, str.length - 2);
+    buttonMarginRight = parseInt(str);
+}
+var buttonWidth = $(".chat-header-button").width();
 function setupHybrisToolBar(){
     var hybrisHeader = $("#hybrisHeader");
     if(hybrisHeader.length == 0){
