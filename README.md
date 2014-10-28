@@ -37,13 +37,13 @@ Copy/paste the script into the Console of your WebBrowser
 
 (while Plug.dj window is on focus and channel is already joined)
 
-Or for firefox users make a new bookmark with the following code :
-
-javascript:(function(){$.getScript('https://raw.githubusercontent.com/Hybris95/HybrisPlugDJ/master/hybrisPlugDJ.js');}());
-
-Or for chrome users make a new bookmark with the following code :
+Users can make a new bookmark with the following code :
 
 javascript:(function(){$.getScript('https://rawgit.com/Hybris95/HybrisPlugDJ/master/hybrisPlugDJ.js');}());
+
+Users can load the following UserScript into GreaseMonkey :
+
+https://rawgit.com/Hybris95/HybrisPlugDJ/master/hybrisPlugDJUserScript.js
 
 Firefox issues
 --------------
