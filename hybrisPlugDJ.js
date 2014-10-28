@@ -675,11 +675,13 @@ function setupHybrisToolBar(){
     }
     toggleHybrisBar.css("background-color", "#282C35");
     toggleHybrisBar.css("position", "relative");
-    toggleHybrisBar.css("top", "8px");
+    toggleHybrisBar.css("padding-top", "8px");
+    toggleHybrisBar.css("padding-bottom", "8px");
     toggleHybrisBar.css("width", "30px");
     toggleHybrisBar.css("height", "30px");
     toggleHybrisBar.css("float", "left");
-    toggleHybrisBar.css("border-left", "1px solid black");
+    var toggleSideBorder = 1;
+    toggleHybrisBar.css("border-left", toggleSideBorder + "px solid black");
     toggleHybrisBar.css("cursor", "pointer");
     toggleHybrisBar.unbind('click.hybris');
     toggleHybrisBar.bind('click.hybris', function(){
@@ -688,9 +690,9 @@ function setupHybrisToolBar(){
         var nbButtons = buttonsLibrary.size;
         buttonContainer.toggle();// TODO - Add an animation on the toggle to make it slide left/right
         if(buttonContainer.css("display") == "block"){
-            $("#hybrisHeader").css("width", ((nbButtons * buttonMarginRight) + (nbButtons * buttonWidth) + toggleHybrisBar.width() + 1) + "px");
+            $("#hybrisHeader").css("width", ((nbButtons * buttonMarginRight) + (nbButtons * buttonWidth) + toggleHybrisBar.width() + toggleSideBorder) + "px");
         }else{
-            $("#hybrisHeader").css("width", (toggleHybrisBar.width() + 1) + "px");
+            $("#hybrisHeader").css("width", (toggleHybrisBar.width() + toggleSideBorder) + "px");
         }
     });
     toggleHybrisBar.unbind('mouseleave.hybris');
@@ -715,7 +717,7 @@ function setupHybrisToolBar(){
     });
     
     var nbButtons = buttonsLibrary.size;
-    hybrisHeader.css("width", ((nbButtons * buttonMarginRight) + (nbButtons * buttonWidth) + toggleHybrisBar.width() + 1) + "px");
+    hybrisHeader.css("width", ((nbButtons * buttonMarginRight) + (nbButtons * buttonWidth) + toggleHybrisBar.width() + toggleSideBorder) + "px");
     hybrisHeader.slideDown();
 }
 /**
