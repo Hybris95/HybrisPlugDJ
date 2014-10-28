@@ -683,6 +683,8 @@ function setupHybrisToolBar(){
     var toggleSideBorder = 1;
     toggleHybrisBar.css("border-left", toggleSideBorder + "px solid black");
     toggleHybrisBar.css("cursor", "pointer");
+    toggleHybrisBar.css("border-top-right-radius", "4px");
+    toggleHybrisBar.css("border-bottom-right-radius", "4px");
     toggleHybrisBar.unbind('click.hybris');
     toggleHybrisBar.bind('click.hybris', function(){
         var toggleHybrisBar = $("#toggleHybrisBar");
