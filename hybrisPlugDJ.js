@@ -206,129 +206,21 @@ function join() {
     }
 }
 
-var videoHeight;
-var videoWidth;
-function hideVideo() {
-    if(!videoHeight){
-        videoHeight = $("#playback-container").css("height");
-    }
-    if(!videoWidth){
-        videoWidth = $("#playback-container").css("width");
-    }
-    $("#playback-container").css("height", "0");
-    $("#playback-container").css("width", "0");
-}
-
-function showVideo() {
-    hideVideo();
-    if(videoHeight){
-        $("#playback-container").css("height", videoHeight);
-    }else{
-        $("#playback-container").css("height", "100%");
-    }
-    
-    if(videoWidth){
-        $("#playback-container").css("width", videoWidth);
-    }else{
-        $("#playback-container").css("width", "100%");
-    }
-}
-
-var background;
-var playbackBGHeight;
-var playbackBGWidth;
-function hideBG() {
-    var playbackImg = $("#playback > div:nth-child(1) > img:nth-child(1)");
-    if(!background){
-        background = $(".room-background").css("background-image");
-    }
-    $(".room-background").css("background-image","");
-    if(!playbackBGHeight){
-        playbackBGHeight = playbackImg.css("height");
-    }
-    if(!playbackBGWidth){
-        playbackBGWidth = playbackImg.css("width");
-    }
-    playbackImg.css("height", "0");
-    playbackImg.css("width", "0");
-}
-
-function showBG() {
-    hideBG();
-    if(background){
-        $(".room-background").css("background-image", background);
-    }else{
-        $(".room-background").css("background-image", "url(\"https://cdn.plug.dj/_/static/images/community/custom/2014hw/background.29748a148b0c5440ddc5899e07bc32b1a1d4b86c.jpg\")");// Halloween BG
-    }
-    var playbackImg = $("#playback > div:nth-child(1) > img:nth-child(1)");
-    if(playbackBGHeight){
-        playbackImg.css("height", playbackBGHeight);
-    }else{
-        playbackImg.css("height", "100%");
-    }
-    if(playbackBGWidth){
-        playbackImg.css("width", playbackBGWidth);
-    }else{
-        playbackImg.css("width", "100%");
-    }
-}
-
-var audienceHeight;
-var audienceWidth;
-var djboothHeight;
-var djboothWidth;
-function hideAvatars() {
-    if(!audienceHeight){
-        audienceHeight = $("#audience-canvas").css("height");
-    }
-    if(!audienceWidth){
-        audienceWidth = $("#audience-canvas").css("width");
-    }
-    $("#audience-canvas").css("height", "0");
-    $("#audience-canvas").css("width", "0");
-    if(!djboothHeight){
-        djboothHeight = $("#dj-canvas").css("height");
-    }
-    if(!djboothWidth){
-        djboothWidth = $("#dj-canvas").css("width");
-    }
-    $("#dj-canvas").css("height", "0");
-    $("#dj-canvas").css("width", "0");
-}
-
-function showAvatars() {
-    hideAvatars();
-    if(audienceHeight){
-        $("#audience-canvas").css("height", audienceHeight);
-    }else{
-        $("#audience-canvas").css("height", "100%");
-    }
-    if(audienceWidth){
-        $("#audience-canvas").css("width", audienceWidth);
-    }else{
-        $("#audience-canvas").css("width", "100%");
-    }
-    if(djboothHeight){
-        $("#dj-canvas").css("height", djboothHeight);
-    }else{
-        $("#dj-canvas").css("height", "100%");
-    }
-    if(djboothWidth){
-        $("#dj-canvas").css("width", djboothWidth);
-    }else{
-        $("#dj-canvas").css("width", "100%");
-    }
-}
-
 function hideUI(){
-    hideVideo();
-    hideBG();
-    hideAvatars();
+    $('#playback-container').addClass('hide-video');
+    $('#playback').addClass('hide-video');
+    $("#audience-canvas").addClass('hide-video');
+    $("#dj-canvas").addClass('hide-video');
+    $('.background').hide();
+    $('.room-background').hide();
 }
 function showUI(){
-    showVideo();
-    showBG();
-    showAvatars();
+    $('#playback-container').removeClass('hide-video');
+    $('#playback').removeClass('hide-video');
+    $("#audience-canvas").removeClass('hide-video');
+    $("#dj-canvas").removeClass('hide-video');
+    $('.background').show();
+    $('.room-background').show();
 }
 
 /**
@@ -642,9 +534,11 @@ if(!buttonMarginRight){
 var buttonWidth = $(".chat-header-button").width();
 function setupHybrisToolBar(){
     var hybrisHeader = $("#hybrisHeader");
-    if(hybrisHeader.length > 0){
+    if(hybrisHeader.length > 0){// Reload
         hybrisHeader.remove();
         buttonsLibrary.clear();
+    }else{// First load
+        $('head').append('<style type="text/css" id="hybrisPlug-css">#playback.hide-video,#playback .hide-video,#audience-canvas.hide-video,#audience-canvas .hide-video,#dj-canvas.hide-video,#dj-canvas .hide-video{height:0 !important}</style>');
     }
     hybrisHeader = $("#hybrisHeader");
     if(hybrisHeader.length == 0){
@@ -790,6 +684,7 @@ function loadToggleModes(){
 /**
  * Main function (executed at loading)
  */
+var currentPathName = window.location.pathname;
 function main(){
     setupHybrisToolBar();
     refreshAPIStatus();
