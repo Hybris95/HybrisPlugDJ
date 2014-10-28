@@ -690,10 +690,9 @@ function setupHybrisToolBar(){
         var toggleHybrisBar = $("#toggleHybrisBar");
         var buttonContainer = $("#hybrisButtonsContainer");
         var nbButtons = buttonsLibrary.size;
+        $("#hybrisHeader").css("width", ((nbButtons * buttonMarginRight) + (nbButtons * buttonWidth) + toggleHybrisBar.width() + toggleSideBorder) + "px");
         buttonContainer.toggle();// TODO - Add an animation on the toggle to make it slide left/right
-        if(buttonContainer.css("display") == "block"){
-            $("#hybrisHeader").css("width", ((nbButtons * buttonMarginRight) + (nbButtons * buttonWidth) + toggleHybrisBar.width() + toggleSideBorder) + "px");
-        }else{
+        if(buttonContainer.css("display") != "block"){
             $("#hybrisHeader").css("width", (toggleHybrisBar.width() + toggleSideBorder) + "px");
         }
     });
