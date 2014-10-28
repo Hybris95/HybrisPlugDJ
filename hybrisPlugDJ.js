@@ -425,8 +425,8 @@ function refreshAPIStatus()
 }
 function startAutoWoot(){
     autoW = true;
-    $("#hybrisAutoWoot").css("background-color", "#105D2F");
     woot();
+    $("#hybrisAutoWoot").css("background-color", "#105D2F");
 }
 function stopAutoWoot(){
     autoW = false;
@@ -480,13 +480,13 @@ function switchAutoNoticeJoinersLeavers(){
 }
 function startAutoHUI(){
     autoHUI = true;
-    $("#hybrisUIToggle").css("background-color", "#105D2F");
     hideUI();
+    $("#hybrisUIToggle").css("background-color", "#105D2F");
 }
 function stopAutoHUI(){
     autoHUI = false;
-    $("#hybrisUIToggle").css("background-color", "#5D102F");
     showUI();
+    $("#hybrisUIToggle").css("background-color", "#5D102F");
 }
 function switchAutoHUI(){
     changedAutoHUI = true;
@@ -498,8 +498,8 @@ function switchAutoHUI(){
 }
 function startAutoJoin(){
     autoJ = true;
-    $("#hybrisAutoJoin").css("background-color", "#105D2F");
     join();
+    $("#hybrisAutoJoin").css("background-color", "#105D2F");
 }
 function stopAutoJoin(){
     autoJ = false;
@@ -613,13 +613,21 @@ Button.prototype.updateToolTip = function(toolTipInfo){
     });
     this.toolTipInfo = toolTipInfo;
 };
+
 function setupButton(htmlId, htmlClass, clickFunction, toolTipInfo){
     if(buttonsLibrary.has(htmlId)){
         var button = buttonsLibrary[htmlId];
-        button.updateClass(htmlClass);
-        button.updateClick(clickFunction);
-        button.updateToolTip(toolTipInfo);
-    }else{
+        try{
+            button.updateClass(htmlClass);
+            button.updateClick(clickFunction);
+            button.updateToolTip(toolTipInfo);
+        }
+        catch(exc){
+            buttonsLibrary.delete(htmlId);
+        }
+    }
+    
+    if(!buttonsLibrary.has(htmlId)){
         var buttonNumber = buttonsLibrary.size;
         var button = new Button(htmlId, htmlClass, clickFunction, toolTipInfo, buttonNumber);
         buttonsLibrary.set(htmlId, button);
@@ -634,6 +642,11 @@ if(!buttonMarginRight){
 var buttonWidth = $(".chat-header-button").width();
 function setupHybrisToolBar(){
     var hybrisHeader = $("#hybrisHeader");
+    if(hybrisHeader.length > 0){
+        hybrisHeader.remove();
+        buttonsLibrary.clear();
+    }
+    hybrisHeader = $("#hybrisHeader");
     if(hybrisHeader.length == 0){
         $("#room").append("<div id=\"hybrisHeader\"></div>");
         hybrisHeader = $("#hybrisHeader");
@@ -721,13 +734,7 @@ function setupHybrisToolBar(){
     hybrisHeader.css("width", ((nbButtons * buttonMarginRight) + (nbButtons * buttonWidth) + toggleHybrisBar.width() + toggleSideBorder) + "px");
     hybrisHeader.slideDown();
 }
-/**
- * Main function (executed at loading)
- */
-function main(){
-    setupHybrisToolBar();
-    refreshAPIStatus();
-    
+function loadToggleModes(){
     if(changedAutoW){
         if(autoW){
             startAutoWoot();
@@ -749,8 +756,10 @@ function main(){
     }
     
     if(changedAutoJoinLeaveNotice){
-        if(autoJoinLeaveNotice){
+        if(autoJoinLeaveNotice == 1){
             startAutoNoticeJoinersLeavers();
+        }else if(autoJoinLeaveNotice == 2){
+            filterAutoNoticeJoinersLeavers();
         }else{
             stopAutoNoticeJoinersLeavers();
         }
@@ -777,5 +786,13 @@ function main(){
     }else{
         stopAutoJoin();
     }
+}
+/**
+ * Main function (executed at loading)
+ */
+function main(){
+    setupHybrisToolBar();
+    refreshAPIStatus();
+    loadToggleModes();
 }
 $(document).ready(main);
