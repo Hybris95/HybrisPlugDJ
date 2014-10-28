@@ -41,21 +41,6 @@ if(!loadedSound){
     loadedSound = new Audio(decodeURIComponent("https://gmflowplayer.googlecode.com/files/notify.ogg"));
 }
 
-var changedAutoW;
-var autoW;
-
-var changedAutoNotice;
-var autoNotice;
-
-var changedAutoJoinLeaveNotice;
-var autoJoinLeaveNotice;
-
-var changedAutoHUI;
-var autoHUI;
-
-var changedAutoJ;
-var autoJ;
-
 /**
  * Just a chill room features
  */
@@ -73,6 +58,40 @@ function isInEDT(){
  */
 function isInTasty(){
     return window.location.pathname == "/tastycat";
+}
+/**
+ * SETTINGS
+ */
+var settings = {
+    changedAutoW: false,
+    autoW: false,
+
+    changedAutoNotice: false,
+    autoNotice: false,
+
+    changedAutoJoinLeaveNotice: false,
+    autoJoinLeaveNotice: false,
+
+    changedAutoHUI: false,
+    autoHUI: false,
+
+    changedAutoJ: false,
+    autoJ: false,
+    
+    showToolbar: true
+};
+function loadSettings(){
+    var localSettings = JSON.parse(localStorage.getItem('hybrisPlugDJSettings'));
+    if(localSettings){
+        for(var setting in settings){
+            if(typeof localSettings[setting] != 'undefined'){
+                settings[setting] = localSettings[setting];
+            }
+        }
+    }
+}
+function saveSettings(){
+    localStorage.setItem('hybrisPlugDJSettings', JSON.stringify(settings));
 }
 /**
  * STATS
@@ -177,17 +196,17 @@ var advanceEventHookedOnApi;
 var advanceFunction;
 if(!advanceFunction){
     advanceFunction = function() {
-        if(autoHUI){
+        if(settings.autoHUI){
             hideUI();
         }else{
             showUI();
         }
         
-        if(autoW){
+        if(settings.autoW){
             woot();
         }
         
-        if(autoJ){
+        if(settings.autoJ){
             join();
         }
     };
@@ -231,7 +250,7 @@ var autoJoinLeaveHookedOnApi;
 var someoneJoined;
 if(!someoneJoined){
     someoneJoined = function(user){
-    	if((autoJoinLeaveNotice == 1) || (autoJoinLeaveNotice == 2 && user.role > 0)) {
+    	if((settings.autoJoinLeaveNotice == 1) || (settings.autoJoinLeaveNotice == 2 && user.role > 0)) {
             API.chatLog(user.username + " joined the room", true);
     	}
     };
@@ -243,7 +262,7 @@ if(!someoneJoined){
 var someoneLeft;
 if(!someoneLeft){
     someoneLeft = function(user){
-    	if((autoJoinLeaveNotice == 1) || (autoJoinLeaveNotice == 2 && user.role > 0)) {
+    	if((settings.autoJoinLeaveNotice == 1) || (settings.autoJoinLeaveNotice == 2 && user.role > 0)) {
             API.chatLog(user.username + " left the room", false);
     	}
     };
@@ -253,7 +272,7 @@ var waitListUpdateHookedOnApi;
 var waitListUpdate;
 if(!waitListUpdate){
     waitListUpdate = function(newWaitList){
-        if(autoJ){
+        if(settings.autoJ){
             join();
         }
     };
@@ -283,7 +302,7 @@ if(!analyseChat){
         {
             if(debug){console.log(username + " told me : " + message);}
             // AutoNotice
-            if(autoNotice){
+            if(settings.autoNotice){
                 loadedSound.play();
             }
         }
@@ -316,94 +335,99 @@ function refreshAPIStatus()
     }
 }
 function startAutoWoot(){
-    autoW = true;
+    settings.autoW = true;
     woot();
     $("#hybrisAutoWoot").css("background-color", "#105D2F");
 }
 function stopAutoWoot(){
-    autoW = false;
+    settings.autoW = false;
     $("#hybrisAutoWoot").css("background-color", "#5D102F");
 }
 function switchAutoWoot(){
-    changedAutoW = true;
-    if(autoW){
+    settings.changedAutoW = true;
+    if(settings.autoW){
         stopAutoWoot();
     }else{
         startAutoWoot();
     }
+    saveSettings();
 }
 function startAutoNotice(){
-    autoNotice = true;
+    settings.autoNotice = true;
     $("#hybrisMention").css("background-color", "#105D2F");
 }
 function stopAutoNotice(){
-    autoNotice = false;
+    settings.autoNotice = false;
     $("#hybrisMention").css("background-color", "#5D102F");
 }
 function switchAutoNotice(){
-    changedAutoNotice = true;
-	if(autoNotice){
+    settings.changedAutoNotice = true;
+	if(settings.autoNotice){
 		stopAutoNotice();
 	}else{
 		startAutoNotice();
 	}
+    saveSettings();
 }
 function startAutoNoticeJoinersLeavers(){
-    autoJoinLeaveNotice = 1;
+    settings.autoJoinLeaveNotice = 1;
     $("#hybrisJoiners").css("background-color", "#105D2F");
 }
 function filterAutoNoticeJoinersLeavers(){
-    autoJoinLeaveNotice = 2;
+    settings.autoJoinLeaveNotice = 2;
     $("#hybrisJoiners").css("background-color", "#102F5D");
 }
 function stopAutoNoticeJoinersLeavers(){
-    autoJoinLeaveNotice = false;
+    settings.autoJoinLeaveNotice = false;
     $("#hybrisJoiners").css("background-color", "#5D102F");
 }
 function switchAutoNoticeJoinersLeavers(){
-    changedAutoJoinLeaveNotice = true;
-    if(autoJoinLeaveNotice == 1){
+    settings.changedAutoJoinLeaveNotice = true;
+    if(settings.autoJoinLeaveNotice == 1){
         filterAutoNoticeJoinersLeavers();
-    }else if(autoJoinLeaveNotice == 2){
+    }else if(settings.autoJoinLeaveNotice == 2){
         stopAutoNoticeJoinersLeavers();
     }else{
         startAutoNoticeJoinersLeavers();
     }
+    saveSettings();
 }
 function startAutoHUI(){
-    autoHUI = true;
+    settings.autoHUI = true;
     hideUI();
     $("#hybrisUIToggle").css("background-color", "#105D2F");
 }
 function stopAutoHUI(){
-    autoHUI = false;
+    settings.autoHUI = false;
     showUI();
     $("#hybrisUIToggle").css("background-color", "#5D102F");
 }
 function switchAutoHUI(){
-    changedAutoHUI = true;
-    if(!autoHUI){
+    settings.changedAutoHUI = true;
+    if(!settings.autoHUI){
         startAutoHUI();
     }else{
         stopAutoHUI();
     }
+    saveSettings();
 }
 function startAutoJoin(){
-    autoJ = true;
+    settings.autoJ = true;
     join();
     $("#hybrisAutoJoin").css("background-color", "#105D2F");
 }
 function stopAutoJoin(){
-    autoJ = false;
+    settings.autoJ = false;
     $("#hybrisAutoJoin").css("background-color", "#5D102F");
 }
 function switchAutoJoin(){
-    changedAutoJ = true;
-    if(autoJ){
+    settings.changedAutoJ = true;
+    if(settings.autoJ){
         stopAutoJoin();
     }else{
         startAutoJoin();
     }
+    saveSettings();
 }
 /**
  * UI Management
@@ -598,8 +622,12 @@ function setupHybrisToolBar(){
         var buttonContainer = $("#hybrisButtonsContainer");
         var nbButtons = buttonsLibrary.size;
         $("#hybrisHeader").css("width", ((nbButtons * buttonMarginRight) + (nbButtons * buttonWidth) + toggleHybrisBar.width() + toggleSideBorder) + "px");
-        buttonContainer.toggle();// TODO - Add an animation on the toggle to make it slide left/right
-        if(buttonContainer.css("display") != "block"){
+        settings.showToolbar = !settings.showToolbar;
+        saveSettings();
+        if(settings.showToolbar){
+            buttonContainer.show();// TODO - Add an animation on the toggle to make it slide left/right
+        }else{
+            buttonContainer.hide();// TODO - Add an animation on the toggle to make it slide left/right
             $("#hybrisHeader").css("width", (toggleHybrisBar.width() + toggleSideBorder) + "px");
         }
     });
@@ -626,11 +654,17 @@ function setupHybrisToolBar(){
     
     var nbButtons = buttonsLibrary.size;
     hybrisHeader.css("width", ((nbButtons * buttonMarginRight) + (nbButtons * buttonWidth) + toggleHybrisBar.width() + toggleSideBorder) + "px");
+    if(settings.showToolbar){
+        hybrisButtonsContainer.show();
+    }else{
+        hybrisButtonsContainer.hide();
+        $("#hybrisHeader").css("width", (toggleHybrisBar.width() + toggleSideBorder) + "px");
+    }
     hybrisHeader.slideDown();
 }
 function loadToggleModes(){
-    if(changedAutoW){
-        if(autoW){
+    if(settings.changedAutoW){
+        if(settings.autoW){
             startAutoWoot();
         }else{
             stopAutoWoot();
@@ -639,8 +673,8 @@ function loadToggleModes(){
         stopAutoWoot();
     }
     
-    if(changedAutoNotice){
-        if(autoNotice){
+    if(settings.changedAutoNotice){
+        if(settings.autoNotice){
             startAutoNotice();
         }else{
             stopAutoNotice();
@@ -649,10 +683,10 @@ function loadToggleModes(){
         stopAutoNotice();
     }
     
-    if(changedAutoJoinLeaveNotice){
-        if(autoJoinLeaveNotice == 1){
+    if(settings.changedAutoJoinLeaveNotice){
+        if(settings.autoJoinLeaveNotice == 1){
             startAutoNoticeJoinersLeavers();
-        }else if(autoJoinLeaveNotice == 2){
+        }else if(settings.autoJoinLeaveNotice == 2){
             filterAutoNoticeJoinersLeavers();
         }else{
             stopAutoNoticeJoinersLeavers();
@@ -661,8 +695,8 @@ function loadToggleModes(){
         stopAutoNoticeJoinersLeavers();
     }
     
-    if(changedAutoHUI){
-        if(autoHUI){
+    if(settings.changedAutoHUI){
+        if(settings.autoHUI){
             startAutoHUI();
         }else{
             stopAutoHUI();
@@ -671,8 +705,8 @@ function loadToggleModes(){
         stopAutoHUI();
     }
     
-    if(changedAutoJ){
-        if(autoJ){
+    if(settings.changedAutoJ){
+        if(settings.autoJ){
             startAutoJoin();
         }else{
             stopAutoJoin();
@@ -680,12 +714,14 @@ function loadToggleModes(){
     }else{
         stopAutoJoin();
     }
+    // Saves in a JSON file all the settings
+    saveSettings();
 }
 /**
  * Main function (executed at loading)
  */
-var currentPathName = window.location.pathname;
 function main(){
+    loadSettings();
     setupHybrisToolBar();
     refreshAPIStatus();
     loadToggleModes();
