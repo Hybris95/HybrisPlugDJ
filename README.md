@@ -43,7 +43,7 @@ javascript:(function(){$.getScript('https://rawgit.com/Hybris95/HybrisPlugDJ/mas
 
 Users can load the following UserScript into GreaseMonkey :
 
-https://rawgit.com/Hybris95/HybrisPlugDJ/master/hybrisPlugDJUserScript.js
+https://rawgit.com/Hybris95/HybrisPlugDJ/master/hybrisPlugDJ.user.js
 
 Firefox issues
 --------------
