@@ -26,8 +26,8 @@ Features
 * AutoJoin (Toggle Button) on all rooms but specific rooms (room moderators have to ask me to be disallowed)
 * Mention sounds (Toggle Button)
 * Joiners/Leavers notification (Toggle Button) - Green = Everyone, Blue = Moderators Only
-* Get the Estimated Time Awaited (from current position or globally if not joined)
 * AutoHide the User Interface (Toggle Button)
+* Get the Estimated Time Awaited (from current position or globally if not joined)
 * Get the names of people who Mehed the current song
 * Get the names of people who Grabbed the current song
 
