@@ -217,7 +217,7 @@ function woot() {
 }
 
 function canAutoJoin(){
-    return isInEDT() || isInTasty();
+    return !isInChill();
 }
 function join() {
     if(canAutoJoin()){
@@ -726,4 +726,4 @@ function main(){
     refreshAPIStatus();
     loadToggleModes();
 }
-$(document).ready(main);
+$(document).ready(main);// TODO - Reload the script if you change room (refresh UI)
