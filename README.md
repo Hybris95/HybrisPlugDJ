@@ -49,6 +49,7 @@ https://rawgit.com/Hybris95/HybrisPlugDJ/master/hybrisPlugDJ.user.js
 Contact
 -------
 By mail : hybris_95@hotmail.com
+
 On PlugDJ : Hybris95
 
 Firefox issues
