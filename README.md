@@ -41,7 +41,7 @@ Users can make a new bookmark with the following code :
 
 javascript:(function(){$.getScript('https://rawgit.com/Hybris95/HybrisPlugDJ/master/hybrisPlugDJ.js');}());
 
-Users can load the following UserScript into GreaseMonkey :
+Users can load the following UserScript into [GreaseMonkey (Firefox)](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) or [Tampermonkey (Chrome)](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo/):
 
 https://rawgit.com/Hybris95/HybrisPlugDJ/master/hybrisPlugDJ.user.js
 
