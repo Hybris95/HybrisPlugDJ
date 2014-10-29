@@ -24,7 +24,7 @@ Features
 --------
 * AutoWoot (Toggle Button)
 * AutoJoin (Toggle Button) on all rooms but specific rooms (room moderators have to ask me to be disallowed)
-* Mention sounds (Toggle Button)
+* Chat sound (Toggle Button) - Green = On mention, Blue = For every message
 * Joiners/Leavers notification (Toggle Button) - Green = Everyone, Blue = Moderators Only
 * AutoHide the User Interface (Toggle Button)
 * Get the Estimated Time Awaited (from current position or globally if not joined)
