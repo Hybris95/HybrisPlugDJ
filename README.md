@@ -23,7 +23,8 @@ Copyright © 2014 Christian BUISSON
 Features
 --------
 * AutoWoot (Toggle Button)
-* AutoJoin (Toggle Button) on all rooms but specific rooms (room moderators have to ask me to be disallowed)
+* AutoJoin (Toggle Button) on all rooms but specific rooms<br />
+  (room moderators have to ask me to be disallowed)
 * Chat sound (Toggle Button) - Green = On mention, Blue = For every message
 * Joiners/Leavers notification (Toggle Button) - Green = Everyone, Blue = Moderators Only
 * AutoHide the User Interface (Toggle Button)
