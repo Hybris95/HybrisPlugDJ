@@ -62,12 +62,17 @@ function isInTasty(){
 /**
  * SETTINGS
  */
+var autoNotice = {
+    disabled: false,
+    onMention: 1,
+    onChat: 2
+};
 var settings = {
     changedAutoW: false,
     autoW: false,
 
     changedAutoNotice: false,
-    autoNotice: false,
+    autoNotice: autoNotice.disabled,
 
     changedAutoJoinLeaveNotice: false,
     autoJoinLeaveNotice: false,
@@ -188,6 +193,18 @@ function askCurrentGrabs(){
     }
 }
 
+function aboutHybris(){
+    API.chatLog("[Features]", true);
+    API.chatLog("AutoWoot - Green: activated, Red: deactivated");
+    API.chatLog("AutoJoin - Green: activated, Red: deactivated");
+    API.chatLog("Chat sound - Green: mention, Blue: all, Red: none");
+    API.chatLog("Join/Leave notice - Green: all, Blue: moderators, Red: none");
+    API.chatLog("Hide user interface - Green: activated, Red: deactivated");
+    API.chatLog("ETA? - Get the Estimated Time Awaiting from the current position");
+    API.chatLog("Mehs? - Get the list of people who mehed the current media");
+    API.chatLog("Grabs? - Get the list of people who grabbed the current media");
+}
+
 /**
  * ADVANCE EVENT :
  * AutoWoot and AutoHideUI
@@ -300,11 +317,15 @@ if(!analyseChat){
         // Watch PMs
         if(message.match("@" + ownUserName))
         {
-            if(debug){console.log(username + " told me : " + message);}
-            // AutoNotice
-            if(settings.autoNotice){
+            // AutoNotice (on mention message)
+            if(settings.autoNotice == autoNotice.onMention){
                 loadedSound.play();
             }
+        }
+        
+        // AutoNotice (on every chat message)
+        if(settings.autoNotice == autoNotice.onChat){
+            loadedSound.play();
         }
     };
 }
@@ -353,16 +374,23 @@ function switchAutoWoot(){
     saveSettings();
 }
 function startAutoNotice(){
-    settings.autoNotice = true;
+    settings.autoNotice = autoNotice.onMention;
     $("#hybrisMention").css("background-color", "#105D2F");
 }
+function autoNoticeOnChat(){
+    settings.autoNotice = autoNotice.onChat;
+    $("#hybrisMention").css("background-color", "#102F5D");
+}
 function stopAutoNotice(){
-    settings.autoNotice = false;
+    settings.autoNotice = autoNotice.disabled;
     $("#hybrisMention").css("background-color", "#5D102F");
 }
 function switchAutoNotice(){
     settings.changedAutoNotice = true;
-	if(settings.autoNotice){
+    // Cycle between AutoNotice values
+	if(settings.autoNotice == autoNotice.onMention){
+        autoNoticeOnChat();
+    }else if(settings.autoNotice == autoNotice.onChat){
 		stopAutoNotice();
 	}else{
 		startAutoNotice();
@@ -591,12 +619,13 @@ function setupHybrisToolBar(){
     if(canAutoJoin()) {
         setupButton("hybrisAutoJoin", "icon-about-white", switchAutoJoin, "AutoJoin");
     }
-    setupButton("hybrisMention", "icon-chat-sound-on", switchAutoNotice, "Mention sound notification");
+    setupButton("hybrisMention", "icon-chat-sound-on", switchAutoNotice, "Chat sound notification");
     setupButton("hybrisJoiners", "icon-ignore", switchAutoNoticeJoinersLeavers, "Joiners/Leavers notification");
     setupButton("hybrisUIToggle", "icon-logout-white", switchAutoHUI, "Hide User Interface");
     setupButton("hybrisEta", "icon-history-white", getEta, "ETA?");
     setupButton("hybrisMehBtn", "icon-meh", askCurrentMehs, "Mehs?");
     setupButton("hybrisGrabBtn", "icon-grab", askCurrentGrabs, "Grabs?");
+    setupButton("hybrisAbout", "icon-ep-small", aboutHybris, "About");
     hybrisHeader.css("height", hybrisHeaderHeight + "px");
     
     var toggleHybrisBar = $("#toggleHybrisBar");
@@ -674,8 +703,10 @@ function loadToggleModes(){
     }
     
     if(settings.changedAutoNotice){
-        if(settings.autoNotice){
+        if(settings.autoNotice == autoNotice.onMention){
             startAutoNotice();
+        }else if(settings.autoNotice == autoNotice.onChat){
+            autoNoticeOnChat();
         }else{
             stopAutoNotice();
         }
