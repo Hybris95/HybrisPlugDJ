@@ -60,6 +60,12 @@ function isInTasty(){
     return window.location.pathname == "/tastycat";
 }
 /**
+ * AnimeMusic.me and Japanese Music
+ */
+function isInHummingBird(){
+    return window.location.pathname == "/hummingbird-me";
+}
+/**
  * SETTINGS
  */
 var autoNotice = {
@@ -234,7 +240,7 @@ function woot() {
 }
 
 function canAutoJoin(){
-    return !isInChill();
+    return !isInChill() && !isInHummingBird();
 }
 function join() {
     if(canAutoJoin()){
