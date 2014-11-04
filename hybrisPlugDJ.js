@@ -66,6 +66,12 @@ function isInHummingBird(){
     return window.location.pathname == "/hummingbird-me";
 }
 /**
+ * Trance House Chill
+ */
+function isInTranceHouseChill(){
+    return window.location.pathname == "/trancehousechill";
+}
+/**
  * SETTINGS
  */
 var autoNotice = {
@@ -240,7 +246,7 @@ function woot() {
 }
 
 function canAutoJoin(){
-    return !isInChill() && !isInHummingBird();
+    return !isInChill() && !isInHummingBird() && !isInTranceHouseChill();
 }
 function join() {
     if(canAutoJoin()){
