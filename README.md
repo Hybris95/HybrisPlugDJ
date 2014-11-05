@@ -28,6 +28,7 @@ Features
 * Chat sound (Toggle Button) - Green = On mention, Blue = For every message
 * Joiners/Leavers notification (Toggle Button) - Green = Everyone, Blue = Moderators Only
 * AutoHide the User Interface (Toggle Button)
+* WaitList changes notification (Toggle Button)
 * Get the Estimated Time Awaited (from current position or globally if not joined)
 * Get the names of people who Mehed the current song
 * Get the names of people who Grabbed the current song
