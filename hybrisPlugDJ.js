@@ -88,6 +88,9 @@ var settings = {
     changedAutoW: false,
     autoW: false,
 
+    changedAutoJ: false,
+    autoJ: false,
+
     changedAutoNotice: false,
     autoNotice: autoNotice.disabled,
 
@@ -96,9 +99,9 @@ var settings = {
 
     changedAutoHUI: false,
     autoHUI: false,
-
-    changedAutoJ: false,
-    autoJ: false,
+    
+    changedAutoWL: false,
+    autoWL: false,
     
     showToolbar: true
 };
@@ -170,7 +173,7 @@ if(!getEta){
             nbOfSec = "0" + nbOfSec;
         }
         if(debug){console.log("Mean duration: " + meanDuration);}
-        API.chatLog("Estimated Time Awaiting : " + nbOfHours + ":" + nbOfMinutes + ":" + nbOfSec, true);
+        API.chatLog(":information_source: Estimated Time Awaiting : " + nbOfHours + ":" + nbOfMinutes + ":" + nbOfSec, true);
     };
 }
 
@@ -180,7 +183,7 @@ function askCurrentMehs(){
     var title = media.title;
     var audience = API.getAudience();
     var atLeastOneMeh = false;
-    API.chatLog("[Mehs] " + author + " - " + title, true);
+    API.chatLog(":thumbsdown: " + author + " - " + title, true);
     for(var i = 0; i < audience.length; i++){
         var user = audience[i];
         if(user.vote == -1){
@@ -198,7 +201,7 @@ function askCurrentGrabs(){
     var title = media.title;
     var audience = API.getAudience();
     var atLeastOneGrab = false;
-    API.chatLog("[Grabs] " + author + " - " + title, true);
+    API.chatLog(":thumbsup: " + author + " - " + title, true);
     for(var i = 0; i < audience.length; i++){
         var user = audience[i];
         if(user.grab){
@@ -212,7 +215,7 @@ function askCurrentGrabs(){
 }
 
 function aboutHybris(){
-    API.chatLog("[Features]", true);
+    API.chatLog(":information_source: [Features]", true);
     API.chatLog("AutoWoot - Green: activated, Red: deactivated");
     API.chatLog("AutoJoin - Green: activated, Red: deactivated");
     API.chatLog("Chat sound - Green: mention, Blue: all, Red: none");
@@ -266,7 +269,9 @@ function canAutoJoin(){
     return canJoin;
 }
 function join() {
+    if(debug){console.log("Try to autojoin");}
     if(canAutoJoin()){
+        if(debug){console.log("Autojoins for real");}
         API.djJoin();
     }
 }
@@ -298,7 +303,7 @@ if(!someoneJoined){
     someoneJoined = function(user){
         if(debug){console.log("Join event");console.log(user);}
     	if((settings.autoJoinLeaveNotice == autoJoinLeaveNotice.all) || (settings.autoJoinLeaveNotice == autoJoinLeaveNotice.moderators && user.role > 0)) {
-            API.chatLog(user.username + " joined the room", true);
+            API.chatLog(":on: " + user.username + " joined the room", true);
     	}
     };
 }
@@ -311,16 +316,55 @@ if(!someoneLeft){
     someoneLeft = function(user){
         if(debug){console.log("Leave event");console.log(user);}
     	if((settings.autoJoinLeaveNotice == autoJoinLeaveNotice.all) || (settings.autoJoinLeaveNotice == autoJoinLeaveNotice.moderators && user.role > 0)) {
-            API.chatLog(user.username + " left the room", false);
+            API.chatLog(":end: " + user.username + " left the room", false);
     	}
     };
 }
 
 var waitListUpdateHookedOnApi;
 var waitListUpdate;
+var oldWaitList = API.getWaitList();// TODO - Update this when changing room
 if(!waitListUpdate){
     waitListUpdate = function(newWaitList){
         if(debug){console.log("WaitListUpdate event");console.log(newWaitList);}
+        
+        // Recovers the addition in the new waitlist
+        if(settings.autoWL){
+            var waitListAdd = new Array();
+            for(var i = 0; i < newWaitList.length; i++){
+                var userWaiting = newWaitList[i];
+                var isNew = true;
+                for(var j = 0; j < oldWaitList.length; j++){
+                    var userWasWaiting = oldWaitList[j];
+                    if(userWaiting.id == userWasWaiting.id){
+                        isNew = false;
+                    }
+                }
+                if(isNew){
+                    waitListAdd.push(userWaiting);
+                    API.chatLog(":new: " + userWaiting.username + " joined the waitlist");
+                }
+            }
+            // Recovers the deletion in the new waitlist
+            var waitListDel = new Array();
+            for(var i = 0; i < oldWaitList.length; i++){
+                var userWasWaiting = oldWaitList[i];
+                var hasLeft = true;
+                for(var j = 0; j < newWaitList.length; j++){
+                    var userWaiting = newWaitList[j];
+                    if(userWaiting.id == userWasWaiting.id){
+                        hasLeft = false;
+                    }
+                }
+                if(hasLeft){
+                    waitListDel.push(userWasWaiting);
+                    API.chatLog(":free: " + userWasWaiting.username + " left the waitlist");
+                }
+            }
+            if(debug){console.log(waitListAdd);console.log(waitListDel);}
+        }
+        oldWaitList = newWaitList;
+        
         if(settings.autoJ){
             join();
         }
@@ -474,6 +518,23 @@ function switchAutoHUI(){
         startAutoHUI();
     }else{
         stopAutoHUI();
+    }
+    saveSettings();
+}
+function startAutoWL(){
+    settings.autoWL = true;
+    $("#hybrisWaitList").css("background-color", "#105D2F");
+}
+function stopAutoWL(){
+    settings.autoWL = false;
+    $("#hybrisWaitList").css("background-color", "#5D102F");
+}
+function switchAutoWaitList(){
+    settings.changedAutoWL = true;
+    if(!settings.autoWL){
+        startAutoWL();
+    }else{
+        stopAutoWL();
     }
     saveSettings();
 }
@@ -660,6 +721,7 @@ function setupHybrisToolBar(){
     setupButton("hybrisMention", "icon-chat-sound-on", switchAutoNotice, "Chat sound notification");
     setupButton("hybrisJoiners", "icon-ignore", switchAutoNoticeJoinersLeavers, "Joiners/Leavers notification");
     setupButton("hybrisUIToggle", "icon-logout-white", switchAutoHUI, "Hide User Interface");
+    setupButton("hybrisWaitList", "icon-waitlist", switchAutoWaitList, "Follow WaitList");
     setupButton("hybrisEta", "icon-history-white", getEta, "ETA?");
     setupButton("hybrisMehBtn", "icon-meh", askCurrentMehs, "Mehs?");
     setupButton("hybrisGrabBtn", "icon-grab", askCurrentGrabs, "Grabs?");
@@ -740,6 +802,16 @@ function loadToggleModes(){
         stopAutoWoot();
     }
     
+    if(settings.changedAutoJ){
+        if(settings.autoJ){
+            startAutoJoin();
+        }else{
+            stopAutoJoin();
+        }
+    }else{
+        stopAutoJoin();
+    }
+    
     if(settings.changedAutoNotice){
         if(settings.autoNotice == autoNotice.onMention){
             startAutoNotice();
@@ -774,15 +846,16 @@ function loadToggleModes(){
         stopAutoHUI();
     }
     
-    if(settings.changedAutoJ){
-        if(settings.autoJ){
-            startAutoJoin();
+    if(settings.changedAutoWL){
+        if(settings.autoWL){
+            startAutoWL();
         }else{
-            stopAutoJoin();
+            stopAutoWL();
         }
     }else{
-        stopAutoJoin();
+        stopAutoWL();
     }
+    
     // Saves in a JSON file all the settings
     saveSettings();
 }
