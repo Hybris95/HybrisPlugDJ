@@ -451,6 +451,12 @@ if(!analyseChat){
                     loadedSound.play();
                 }
             }
+            else if(type.startsWith("emote")){
+                // AutoNotice (on mention message)
+                if(settings.autoNotice == autoNotice.onMention || settings.autoNotice == autoNotice.onChat){
+                    loadedSound.play();
+                }
+            }
         }
     };
 }
