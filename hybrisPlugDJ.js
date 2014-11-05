@@ -220,6 +220,7 @@ function aboutHybris(){
     API.chatLog("AutoJoin - Green: activated, Red: deactivated");
     API.chatLog("Chat sound - Green: mention, Blue: all, Red: none");
     API.chatLog("Join/Leave notice - Green: all, Blue: moderators, Red: none");
+    API.chatLog("Follow WaitList - Green: all, Red: none");
     API.chatLog("Hide user interface - Green: activated, Red: deactivated");
     API.chatLog("ETA? - Get the Estimated Time Awaiting from the current position");
     API.chatLog("Mehs? - Get the list of people who mehed the current media");
@@ -330,6 +331,12 @@ if(!waitListUpdate){
         
         // Recovers the addition in the new waitlist
         if(settings.autoWL){
+            var currentDJ = API.getDJ();
+            var history = API.getHistory();
+            var lastDJ = currentDJ;
+            if(history.length > 1){
+                lastDJ = history[1].user;
+            }
             var waitListAdd = new Array();
             for(var i = 0; i < newWaitList.length; i++){
                 var userWaiting = newWaitList[i];
@@ -342,7 +349,11 @@ if(!waitListUpdate){
                 }
                 if(isNew){
                     waitListAdd.push(userWaiting);
-                    API.chatLog(":new: " + userWaiting.username + " joined the waitlist");
+                    if(lastDJ.id == userWaiting.id){
+                        API.chatLog(":up: " + userWaiting.username + " rejoined the waitlist");
+                    }else{
+                        API.chatLog(":new: " + userWaiting.username + " joined the waitlist");
+                    }
                 }
             }
             // Recovers the deletion in the new waitlist
@@ -358,7 +369,9 @@ if(!waitListUpdate){
                 }
                 if(hasLeft){
                     waitListDel.push(userWasWaiting);
-                    API.chatLog(":free: " + userWasWaiting.username + " left the waitlist");
+                    if(currentDJ.id != userWasWaiting.id){
+                        API.chatLog(":free: " + userWasWaiting.username + " left the waitlist");
+                    }
                 }
             }
             if(debug){console.log(waitListAdd);console.log(waitListDel);}
