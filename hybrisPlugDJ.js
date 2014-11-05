@@ -378,6 +378,8 @@ if(!waitListUpdate){
                     waitListDel.push(userWasWaiting);
                     if(currentDJ.id != userWasWaiting.id){
                         API.chatLog(":free: " + userWasWaiting.username + " left the waitlist");
+                    }else{
+                        API.chatLog(":cool: " + userWasWaiting.username + " left the waitlist to become a DJ");
                     }
                 }
             }
