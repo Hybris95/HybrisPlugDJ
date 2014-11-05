@@ -333,6 +333,13 @@ if(!waitListUpdate){
         if(settings.autoWL){
             var currentDJ = API.getDJ();
             if(debug){console.log("Current DJ");console.log(currentDJ);}
+            var currentHistory = API.getHistory();
+            var lastDJ = currentDJ;
+            if(currentHistory.length > 1){
+                var lastHistory = currentHistory[1];
+                lastDJ = lastHistory.user;
+            }
+            if(debug){console.log("Last DJ");console.log(lastDJ);}
             var waitListAdd = new Array();
             for(var i = 0; i < newWaitList.length; i++){
                 var userWaiting = newWaitList[i];
@@ -345,7 +352,7 @@ if(!waitListUpdate){
                 }
                 if(isNew){
                     waitListAdd.push(userWaiting);
-                    if(currentDJ.id == userWaiting.id){
+                    if(lastDJ.id == userWaiting.id){
                         API.chatLog(":up: " + userWaiting.username + " rejoined the waitlist");
                     }else{
                         API.chatLog(":new: " + userWaiting.username + " joined the waitlist");
@@ -365,7 +372,9 @@ if(!waitListUpdate){
                 }
                 if(hasLeft){
                     waitListDel.push(userWasWaiting);
-                    API.chatLog(":free: " + userWasWaiting.username + " left the waitlist");
+                    if(currentDJ.id != userWasWaiting.id){
+                        API.chatLog(":free: " + userWasWaiting.username + " left the waitlist");
+                    }
                 }
             }
             if(debug){console.log(waitListAdd);console.log(waitListDel);}
