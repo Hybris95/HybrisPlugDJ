@@ -447,7 +447,7 @@ if(!analyseChat){
             }
             else if(type == "mention"){
                 // AutoNotice (on mention message)
-                if(settings.autoNotice == autoNotice.onMention){
+                if(settings.autoNotice == autoNotice.onMention || settings.autoNotice == autoNotice.onChat){
                     loadedSound.play();
                 }
             }
