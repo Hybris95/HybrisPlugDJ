@@ -40,6 +40,7 @@ var loadedSound;
 if(!loadedSound){
     loadedSound = new Audio(decodeURIComponent("https://gmflowplayer.googlecode.com/files/notify.ogg"));
 }
+var oldWaitList = API.getWaitList();
 
 /**
  * Just a chill room features
@@ -228,6 +229,23 @@ function aboutHybris(){
 }
 
 /**
+ * CHANGE ROOM EVENT :
+ */
+var changeRoomEventHookedOnApi;
+var changeRoomFunction;// TODO - Effectively hook this on a room change event (dispatchevent ???)
+if(!changeRoomFunction){
+    changeRoomFunction = function() {
+        oldWaitList = API.getWaitList();
+        if(settings.autoW){
+            woot();
+        }
+        if(settings.autoJ){
+            join();
+        }
+    };
+}
+
+/**
  * ADVANCE EVENT :
  * AutoWoot and AutoHideUI
  */
@@ -236,6 +254,9 @@ var advanceFunction;
 if(!advanceFunction){
     advanceFunction = function(data) {
         if(debug){console.log("Advance event");console.log(data);}
+        
+        // TODO - Say here your stats if you were the last one playing
+        
         if(settings.autoHUI){
             hideUI();
         }else{
@@ -322,9 +343,12 @@ if(!someoneLeft){
     };
 }
 
+/**
+ * WAIT LIST UPDATE EVENT :
+ * AutoWaitList
+ */
 var waitListUpdateHookedOnApi;
 var waitListUpdate;
-var oldWaitList = API.getWaitList();// TODO - Update this when changing room
 if(!waitListUpdate){
     waitListUpdate = function(newWaitList){
         if(debug){console.log("WaitListUpdate event");console.log(newWaitList);}
@@ -413,20 +437,17 @@ if(!analyseChat){
             lastTimeStamp = timestamp;
         }
         
-        // Analyse messages
-        if(type == "message"){
-            // Watch messages sent by other users
-            if(username != ownUserName){
-                // Watch mentions
-                if(message.match("@" + ownUserName)){
-                    // AutoNotice (on mention message)
-                    if(settings.autoNotice == autoNotice.onMention){
-                        loadedSound.play();
-                    }
-                }
-                
+        // Watch chat sent by other users
+        if(username != ownUserName){
+            if(type == "message"){
                 // AutoNotice (on every chat message)
                 if(settings.autoNotice == autoNotice.onChat){
+                    loadedSound.play();
+                }
+            }
+            else if(type == "mention"){
+                // AutoNotice (on mention message)
+                if(settings.autoNotice == autoNotice.onMention){
                     loadedSound.play();
                 }
             }
