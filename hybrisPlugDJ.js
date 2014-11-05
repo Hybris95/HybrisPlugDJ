@@ -79,6 +79,11 @@ var autoNotice = {
     onMention: 1,
     onChat: 2
 };
+var autoJoinLeaveNotice = {
+    disabled: false,
+    all: 1,
+    moderators: 2
+};
 var settings = {
     changedAutoW: false,
     autoW: false,
@@ -87,7 +92,7 @@ var settings = {
     autoNotice: autoNotice.disabled,
 
     changedAutoJoinLeaveNotice: false,
-    autoJoinLeaveNotice: false,
+    autoJoinLeaveNotice: autoJoinLeaveNotice.disabled,
 
     changedAutoHUI: false,
     autoHUI: false,
@@ -164,6 +169,7 @@ if(!getEta){
         if(nbOfSec < 10){
             nbOfSec = "0" + nbOfSec;
         }
+        if(debug){console.log("Mean duration: " + meanDuration);}
         API.chatLog("Estimated Time Awaiting : " + nbOfHours + ":" + nbOfMinutes + ":" + nbOfSec, true);
     };
 }
@@ -224,7 +230,8 @@ function aboutHybris(){
 var advanceEventHookedOnApi;
 var advanceFunction;
 if(!advanceFunction){
-    advanceFunction = function() {
+    advanceFunction = function(data) {
+        if(debug){console.log("Advance event");console.log(data);}
         if(settings.autoHUI){
             hideUI();
         }else{
@@ -246,7 +253,17 @@ function woot() {
 }
 
 function canAutoJoin(){
-    return !isInChill() && !isInHummingBird() && !isInTranceHouseChill();
+    var canJoin = true;
+    if(canJoin && isInChill()){
+        canJoin = false;
+    }
+    if(canJoin && isInHummingBird()){
+        canJoin = false;
+    }
+    if(canJoin && isInTranceHouseChill()){
+        canJoin = false;
+    }
+    return canJoin;
 }
 function join() {
     if(canAutoJoin()){
@@ -279,7 +296,8 @@ var autoJoinLeaveHookedOnApi;
 var someoneJoined;
 if(!someoneJoined){
     someoneJoined = function(user){
-    	if((settings.autoJoinLeaveNotice == 1) || (settings.autoJoinLeaveNotice == 2 && user.role > 0)) {
+        if(debug){console.log("Join event");console.log(user);}
+    	if((settings.autoJoinLeaveNotice == autoJoinLeaveNotice.all) || (settings.autoJoinLeaveNotice == autoJoinLeaveNotice.moderators && user.role > 0)) {
             API.chatLog(user.username + " joined the room", true);
     	}
     };
@@ -291,7 +309,8 @@ if(!someoneJoined){
 var someoneLeft;
 if(!someoneLeft){
     someoneLeft = function(user){
-    	if((settings.autoJoinLeaveNotice == 1) || (settings.autoJoinLeaveNotice == 2 && user.role > 0)) {
+        if(debug){console.log("Leave event");console.log(user);}
+    	if((settings.autoJoinLeaveNotice == autoJoinLeaveNotice.all) || (settings.autoJoinLeaveNotice == autoJoinLeaveNotice.moderators && user.role > 0)) {
             API.chatLog(user.username + " left the room", false);
     	}
     };
@@ -301,6 +320,7 @@ var waitListUpdateHookedOnApi;
 var waitListUpdate;
 if(!waitListUpdate){
     waitListUpdate = function(newWaitList){
+        if(debug){console.log("WaitListUpdate event");console.log(newWaitList);}
         if(settings.autoJ){
             join();
         }
@@ -314,6 +334,7 @@ var chatEventHookedOnApi;
 var analyseChat;
 if(!analyseChat){
     analyseChat = function(chat){
+        if(debug){console.log("Chat event");console.log(chat);}
         var message = chat.message;
         var username = chat.un;
         var type = chat.type;
@@ -415,22 +436,22 @@ function switchAutoNotice(){
     saveSettings();
 }
 function startAutoNoticeJoinersLeavers(){
-    settings.autoJoinLeaveNotice = 1;
+    settings.autoJoinLeaveNotice = autoJoinLeaveNotice.all;
     $("#hybrisJoiners").css("background-color", "#105D2F");
 }
 function filterAutoNoticeJoinersLeavers(){
-    settings.autoJoinLeaveNotice = 2;
+    settings.autoJoinLeaveNotice = autoJoinLeaveNotice.moderators;
     $("#hybrisJoiners").css("background-color", "#102F5D");
 }
 function stopAutoNoticeJoinersLeavers(){
-    settings.autoJoinLeaveNotice = false;
+    settings.autoJoinLeaveNotice = autoJoinLeaveNotice.disabled;
     $("#hybrisJoiners").css("background-color", "#5D102F");
 }
 function switchAutoNoticeJoinersLeavers(){
     settings.changedAutoJoinLeaveNotice = true;
-    if(settings.autoJoinLeaveNotice == 1){
+    if(settings.autoJoinLeaveNotice == autoJoinLeaveNotice.all){
         filterAutoNoticeJoinersLeavers();
-    }else if(settings.autoJoinLeaveNotice == 2){
+    }else if(settings.autoJoinLeaveNotice == autoJoinLeaveNotice.moderators){
         stopAutoNoticeJoinersLeavers();
     }else{
         startAutoNoticeJoinersLeavers();
@@ -732,9 +753,9 @@ function loadToggleModes(){
     }
     
     if(settings.changedAutoJoinLeaveNotice){
-        if(settings.autoJoinLeaveNotice == 1){
+        if(settings.autoJoinLeaveNotice == autoJoinLeaveNotice.all){
             startAutoNoticeJoinersLeavers();
-        }else if(settings.autoJoinLeaveNotice == 2){
+        }else if(settings.autoJoinLeaveNotice == autoJoinLeaveNotice.moderators){
             filterAutoNoticeJoinersLeavers();
         }else{
             stopAutoNoticeJoinersLeavers();
