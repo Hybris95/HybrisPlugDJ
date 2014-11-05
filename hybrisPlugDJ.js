@@ -439,13 +439,13 @@ if(!analyseChat){
         
         // Watch chat sent by other users
         if(username != ownUserName){
-            if(type == "message"){
+            if(type.startsWith("message")){
                 // AutoNotice (on every chat message)
                 if(settings.autoNotice == autoNotice.onChat){
                     loadedSound.play();
                 }
             }
-            else if(type == "mention"){
+            else if(type.startsWith("mention")){
                 // AutoNotice (on mention message)
                 if(settings.autoNotice == autoNotice.onMention || settings.autoNotice == autoNotice.onChat){
                     loadedSound.play();
