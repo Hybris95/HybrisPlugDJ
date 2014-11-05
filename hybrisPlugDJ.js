@@ -220,7 +220,7 @@ function aboutHybris(){
     API.chatLog("AutoJoin - Green: activated, Red: deactivated");
     API.chatLog("Chat sound - Green: mention, Blue: all, Red: none");
     API.chatLog("Join/Leave notice - Green: all, Blue: moderators, Red: none");
-    API.chatLog("Follow WaitList - Green: all, Red: none");
+    API.chatLog("Follow WaitList - Green: activated, Red: deactivated");
     API.chatLog("Hide user interface - Green: activated, Red: deactivated");
     API.chatLog("ETA? - Get the Estimated Time Awaiting from the current position");
     API.chatLog("Mehs? - Get the list of people who mehed the current media");
@@ -741,7 +741,7 @@ function setupHybrisToolBar(){
     setupButton("hybrisEta", "icon-history-white", getEta, "ETA?");
     setupButton("hybrisMehBtn", "icon-meh", askCurrentMehs, "Mehs?");
     setupButton("hybrisGrabBtn", "icon-grab", askCurrentGrabs, "Grabs?");
-    setupButton("hybrisAbout", "icon-ep-small", aboutHybris, "About");
+    setupButton("hybrisAbout", "icon-ep-small", aboutHybris, "Help");
     hybrisHeader.css("height", hybrisHeaderHeight + "px");
     
     var toggleHybrisBar = $("#toggleHybrisBar");
