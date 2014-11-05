@@ -453,7 +453,12 @@ if(!analyseChat){
             }
             else if(type.startsWith("emote")){
                 // AutoNotice (on mention message)
-                if(settings.autoNotice == autoNotice.onMention || settings.autoNotice == autoNotice.onChat){
+                if(settings.autoNotice == autoNotice.onMention){
+                    if(message.match("@" + ownUserName)){
+                        loadedSound.play();
+                    }
+                }
+                else if(settings.autoNotice == autoNotice.onChat){
                     loadedSound.play();
                 }
             }
