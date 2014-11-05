@@ -326,18 +326,23 @@ if(!analyseChat){
             lastTimeStamp = timestamp;
         }
         
-        // Watch PMs
-        if(message.match("@" + ownUserName))
-        {
-            // AutoNotice (on mention message)
-            if(settings.autoNotice == autoNotice.onMention){
-                loadedSound.play();
+        // Analyse messages
+        if(type == "message"){
+            // Watch messages sent by other users
+            if(username != ownUserName){
+                // Watch mentions
+                if(message.match("@" + ownUserName)){
+                    // AutoNotice (on mention message)
+                    if(settings.autoNotice == autoNotice.onMention){
+                        loadedSound.play();
+                    }
+                }
+                
+                // AutoNotice (on every chat message)
+                if(settings.autoNotice == autoNotice.onChat){
+                    loadedSound.play();
+                }
             }
-        }
-        
-        // AutoNotice (on every chat message)
-        if(settings.autoNotice == autoNotice.onChat){
-            loadedSound.play();
         }
     };
 }
