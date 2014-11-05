@@ -220,8 +220,8 @@ function aboutHybris(){
     API.chatLog("AutoJoin - Green: activated, Red: deactivated");
     API.chatLog("Chat sound - Green: mention, Blue: all, Red: none");
     API.chatLog("Join/Leave notice - Green: all, Blue: moderators, Red: none");
-    API.chatLog("Follow WaitList - Green: activated, Red: deactivated");
     API.chatLog("Hide user interface - Green: activated, Red: deactivated");
+    API.chatLog("Follow WaitList - Green: activated, Red: deactivated");
     API.chatLog("ETA? - Get the Estimated Time Awaiting from the current position");
     API.chatLog("Mehs? - Get the list of people who mehed the current media");
     API.chatLog("Grabs? - Get the list of people who grabbed the current media");
@@ -335,9 +335,13 @@ if(!waitListUpdate){
             if(debug){console.log("Current DJ");console.log(currentDJ);}
             var currentHistory = API.getHistory();
             var lastDJ = currentDJ;
-            if(currentHistory.length > 1){
-                var lastHistory = currentHistory[1];
+            if(currentHistory.length > 0){
+                var lastHistory = currentHistory[0];
                 lastDJ = lastHistory.user;
+                if(lastDJ.id == currentDJ.id && currentHistory.length > 1){
+                    lastHistory = currentHistory[1];
+                    lastDJ = lastHistory.user;
+                }
             }
             if(debug){console.log("Last DJ");console.log(lastDJ);}
             var waitListAdd = new Array();
