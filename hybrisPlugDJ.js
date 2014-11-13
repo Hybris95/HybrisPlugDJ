@@ -40,8 +40,13 @@ var loadedSound;
 if(!loadedSound){
     loadedSound = new Audio(decodeURIComponent("https://gmflowplayer.googlecode.com/files/notify.ogg"));
 }
-var oldWaitList = API.getWaitList();
 var currentRoom = window.location.pathname;
+
+var oldWaitList;
+var upVoteList;
+var downVoteList;
+var grabsList;
+initLists();
 
 /**
  * Just a chill room features
@@ -105,6 +110,9 @@ var settings = {
     
     changedAutoWL: false,
     autoWL: false,
+    
+    changedAutoSStat: false,
+    autoSongStat: false,
     
     showToolbar: true
 };
@@ -175,17 +183,9 @@ function askCurrentMehs(){
     var media = API.getMedia();
     var author = media.author;
     var title = media.title;
-    var audience = API.getAudience();
-    var atLeastOneMeh = false;
     API.chatLog(":thumbsdown: " + author + " - " + title, true);
-    for(var i = 0; i < audience.length; i++){
-        var user = audience[i];
-        if(user.vote == -1){
-            API.chatLog(user.username + " mehed");
-            atLeastOneMeh = true;
-        }
-    }
-    if(!atLeastOneMeh){
+    downVoteList.forEach(function(value){API.chatLog(value + " mehed");});
+    if(downVoteList.length == 0){
         API.chatLog("Nobody mehed");
     }
 }
@@ -193,17 +193,9 @@ function askCurrentGrabs(){
     var media = API.getMedia();
     var author = media.author;
     var title = media.title;
-    var audience = API.getAudience();
-    var atLeastOneGrab = false;
     API.chatLog(":thumbsup: " + author + " - " + title, true);
-    for(var i = 0; i < audience.length; i++){
-        var user = audience[i];
-        if(user.grab){
-            API.chatLog(user.username + " grabbed");
-            atLeastOneGrab = true;
-        }
-    }
-    if(!atLeastOneGrab){
+    grabsList.forEach(function(value){API.chatLog(value + " grabbed");});
+    if(grabsList.length == 0){
         API.chatLog("Nobody grabbed");
     }
 }
@@ -216,6 +208,7 @@ function aboutHybris(){
     API.chatLog("Join/Leave notice - Green: all, Blue: moderators, Red: none");
     API.chatLog("Hide user interface - Green: activated, Red: deactivated");
     API.chatLog("Follow WaitList - Green: activated, Red: deactivated");
+    API.chatLog("My Song Stat - Green: activated, Red: deactivated");
     API.chatLog("ETA? - Get the Estimated Time Awaiting from the current position");
     API.chatLog("Mehs? - Get the list of people who mehed the current media");
     API.chatLog("Grabs? - Get the list of people who grabbed the current media");
@@ -295,7 +288,7 @@ function changeRoomFunction() {
         }else{
             if(debug){console.log("Changed from room : " + currentRoom + " to " + window.location.pathname);}
             currentRoom = window.location.pathname;
-            oldWaitList = API.getWaitList();
+            initLists();
             setupHybrisToolBar();
         }
     }
@@ -324,8 +317,84 @@ if(!friendJoinEventHookedOnApi){
 }
 
 /**
+ * GRAB EVENT :
+ * AutoSongStat
+ * AskCurrentGrabs
+ */
+var grabEventHookedOnApi;
+var grabFunction;
+if(grabFunction && grabEventHookedOnApi){
+    API.off(API.GRAB_UPDATE, grabFunction);
+    grabEventHookedOnApi = false;
+}
+grabFunction = function(data){
+    if(debug){console.log("Grab event");console.log(data);}
+    
+    grabsList.push(data.user.username);
+};
+if(!grabEventHookedOnApi){
+    API.on(API.GRAB_UPDATE, grabFunction);
+    grabEventHookedOnApi = true;
+}
+
+/**
+ * VOTE EVENT :
+ * AutoSongStat
+ * AskCurrentMehs
+ */
+var voteEventHookedOnApi;
+var voteFunction;
+if(voteFunction && voteEventHookedOnApi){
+    API.off(API.VOTE_UPDATE, voteFunction);
+    voteEventHookedOnApi = false;
+}
+voteFunction = function(data){
+    if(debug){console.log("Vote event");console.log(data);}
+    
+    var voteUserName = data.user.username;
+    if(data.vote == 1){
+        upVoteList.push(voteUserName);
+        downVoteList.pop(voteUserName);
+    }
+    else if(data.vote == -1){
+        upVoteList.pop(voteUserName);
+        downVoteList.push(voteUserName);
+    }
+    else{
+        upVoteList.pop(voteUserName);
+        downVoteList.pop(voteUserName);
+    }
+};
+if(!voteEventHookedOnApi){
+    API.on(API.VOTE_UPDATE, voteFunction);
+    voteEventHookedOnApi = true;
+}
+
+function initLists(){
+    oldWaitList = API.getWaitList();
+    upVoteList = new Array();
+    downVoteList = new Array();
+    grabsList = new Array();
+    var audience = API.getAudience();
+    for(var i = 0; i < audience.length; i++){
+        var user = audience[i];
+        if(user.vote == -1){
+            downVoteList.push(user.username);
+        }
+        else if(user.vote == 1){
+            upVoteList.push(user.username);
+        }
+        if(user.grab){
+            grabsList.push(user.username);
+        }
+    }
+}
+
+/**
  * ADVANCE EVENT :
- * AutoWoot and AutoHideUI
+ * AutoWoot
+ * AutoHideUI
+ * AutoSongStat
  */
 var advanceEventHookedOnApi;
 var advanceFunction;
@@ -336,7 +405,15 @@ if(advanceFunction && advanceEventHookedOnApi){
 advanceFunction = function(data) {
     if(debug){console.log("Advance event");console.log(data);}
     
-    // TODO - Say here your stats if you were the last one playing
+    if(settings.autoSongStat){
+        if(data.lastPlay.dj.username == ownUserName){
+            askCurrentGrabs();
+            askCurrentMehs();
+        }
+    }
+    upVoteList = new Array();
+    downVoteList = new Array();
+    grabsList = new Array();
     
     if(settings.autoHUI){
         hideUI();
@@ -554,6 +631,24 @@ function switchAutoWoot(){
     }
     saveSettings();
 }
+function startAutoJoin(){
+    settings.autoJ = true;
+    join();
+    $("#hybrisAutoJoin").css("background-color", "#105D2F");
+}
+function stopAutoJoin(){
+    settings.autoJ = false;
+    $("#hybrisAutoJoin").css("background-color", "#5D102F");
+}
+function switchAutoJoin(){
+    settings.changedAutoJ = true;
+    if(settings.autoJ){
+        stopAutoJoin();
+    }else{
+        startAutoJoin();
+    }
+    saveSettings();
+}
 function startAutoNotice(){
     settings.autoNotice = autoNotice.onMention;
     $("#hybrisMention").css("background-color", "#105D2F");
@@ -637,21 +732,20 @@ function switchAutoWaitList(){
     }
     saveSettings();
 }
-function startAutoJoin(){
-    settings.autoJ = true;
-    join();
-    $("#hybrisAutoJoin").css("background-color", "#105D2F");
+function startAutoSStat(){
+    settings.autoSongStat = true;
+    $("#hybrisSongStat").css("background-color", "#105D2F");
 }
-function stopAutoJoin(){
-    settings.autoJ = false;
-    $("#hybrisAutoJoin").css("background-color", "#5D102F");
+function stopAutoSStat(){
+    settings.autoSongStat = false;
+    $("#hybrisSongStat").css("background-color", "#5D102F");
 }
-function switchAutoJoin(){
-    settings.changedAutoJ = true;
-    if(settings.autoJ){
-        stopAutoJoin();
+function switchAutoSongStat(){
+    settings.changedAutoSStat = true;
+    if(!settings.autoSongStat){
+        startAutoSStat();
     }else{
-        startAutoJoin();
+        stopAutoSStat();
     }
     saveSettings();
 }
@@ -784,68 +878,58 @@ if(!buttonMarginRight){
 }
 var buttonWidth = $(".chat-header-button").width();
 function loadToggleModes(){
-    if(settings.changedAutoW){
-        if(settings.autoW){
-            startAutoWoot();
-        }else{
-            stopAutoWoot();
-        }
+    if(settings.changedAutoW && settings.autoW){
+        startAutoWoot();
     }else{
         stopAutoWoot();
     }
     
-    if(settings.changedAutoJ){
-        if(settings.autoJ){
-            startAutoJoin();
-        }else{
-            stopAutoJoin();
-        }
+    if(settings.changedAutoJ && settings.autoJ){
+        startAutoJoin();
     }else{
         stopAutoJoin();
     }
     
-    if(settings.changedAutoNotice){
+    if(settings.changedAutoNotice && settings.autoNotice){
         if(settings.autoNotice == autoNotice.onMention){
             startAutoNotice();
         }else if(settings.autoNotice == autoNotice.onChat){
             autoNoticeOnChat();
         }else{
-            stopAutoNotice();
+            startAutoNotice();
         }
     }else{
         stopAutoNotice();
     }
     
-    if(settings.changedAutoJoinLeaveNotice){
+    if(settings.changedAutoJoinLeaveNotice && settings.autoJoinLeaveNotice){
         if(settings.autoJoinLeaveNotice == autoJoinLeaveNotice.all){
             startAutoNoticeJoinersLeavers();
         }else if(settings.autoJoinLeaveNotice == autoJoinLeaveNotice.moderators){
             filterAutoNoticeJoinersLeavers();
         }else{
-            stopAutoNoticeJoinersLeavers();
+            startAutoNoticeJoinersLeavers();
         }
     }else{
         stopAutoNoticeJoinersLeavers();
     }
     
-    if(settings.changedAutoHUI){
-        if(settings.autoHUI){
-            startAutoHUI();
-        }else{
-            stopAutoHUI();
-        }
+    if(settings.changedAutoHUI && settings.autoHUI){
+        startAutoHUI();
     }else{
         stopAutoHUI();
     }
     
-    if(settings.changedAutoWL){
-        if(settings.autoWL){
-            startAutoWL();
-        }else{
-            stopAutoWL();
-        }
+    if(settings.changedAutoWL && settings.autoWL){
+        startAutoWL();
     }else{
         stopAutoWL();
+    }
+    
+    if(settings.changedAutoSStat && settings.autoSongStat){
+        startAutoSStat();
+    }else{
+        stopAutoSStat();
     }
     
     // Saves in a JSON file all the settings
@@ -890,6 +974,7 @@ function setupHybrisToolBar(){
     setupButton("hybrisJoiners", "icon-ignore", switchAutoNoticeJoinersLeavers, "Joiners/Leavers notification");
     setupButton("hybrisUIToggle", "icon-logout-white", switchAutoHUI, "Hide User Interface");
     setupButton("hybrisWaitList", "icon-waitlist", switchAutoWaitList, "Follow WaitList");
+    setupButton("hybrisSongStat", "icon-current-dj", switchAutoSongStat, "My Song Stat");
     setupButton("hybrisEta", "icon-history-white", getEta, "ETA?");
     setupButton("hybrisMehBtn", "icon-meh", askCurrentMehs, "Mehs?");
     setupButton("hybrisGrabBtn", "icon-grab", askCurrentGrabs, "Grabs?");
