@@ -331,7 +331,9 @@ grabFunction = function(data){
     if(debug){console.log("Grab event");console.log(data);}
     
     var grabUserName = data.user.username;
-    grabsList.pop(grabUserName);
+    if(grabsList.indexOf(grabUserName) != -1){
+        grabsList.pop(grabUserName);
+    }
     grabsList.push(grabUserName);
 };
 if(!grabEventHookedOnApi){
@@ -354,8 +356,12 @@ voteFunction = function(data){
     if(debug){console.log("Vote event");console.log(data);}
     
     var voteUserName = data.user.username;
-    upVoteList.pop(voteUserName);
-    downVoteList.pop(voteUserName);
+    if(upVoteList.indexOf(voteUserName) != -1){
+        upVoteList.pop(voteUserName);
+    }
+    if(downVoteList.indexOf(voteUserName) != -1){
+        downVoteList.pop(voteUserName);
+    }
     if(data.vote == 1){
         upVoteList.push(voteUserName);
     }
