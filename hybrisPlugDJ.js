@@ -41,37 +41,39 @@ if(!loadedSound){
     loadedSound = new Audio(decodeURIComponent("https://gmflowplayer.googlecode.com/files/notify.ogg"));
 }
 var oldWaitList = API.getWaitList();
+var currentRoom = window.location.pathname;
 
 /**
  * Just a chill room features
  */
 function isInChill(){
-	return window.location.pathname == "/new-to-this-shit-mrsuicidesheep";
+	return currentRoom == "/new-to-this-shit-mrsuicidesheep";
 }
 /**
  * Electro, Dubstep & Techno features
  */
 function isInEDT(){
-    return window.location.pathname == "/edtentertainment";
+    return currentRoom == "/edtentertainment";
 }
 /**
  * Tastycat features
  */
 function isInTasty(){
-    return window.location.pathname == "/tastycat";
+    return currentRoom == "/tastycat";
 }
 /**
  * AnimeMusic.me and Japanese Music
  */
 function isInHummingBird(){
-    return window.location.pathname == "/hummingbird-me";
+    return currentRoom == "/hummingbird-me";
 }
 /**
  * Trance House Chill
  */
 function isInTranceHouseChill(){
-    return window.location.pathname == "/trancehousechill";
+    return currentRoom == "/trancehousechill";
 }
+
 /**
  * SETTINGS
  */
@@ -119,6 +121,106 @@ function loadSettings(){
 function saveSettings(){
     localStorage.setItem('hybrisPlugDJSettings', JSON.stringify(settings));
 }
+
+/**
+ * Main functions
+ */
+function woot() {// TODO - Fix the fact that it doesnt woot correctly after changing room (random bug)
+    if(document.getElementById('woot') && API.enabled){
+        $("#woot").click();
+    }else{
+        window.setTimeout(woot, 200);
+    }
+}
+
+function canAutoJoin(){
+    var canJoin = true;
+    if(canJoin && isInChill()){
+        canJoin = false;
+    }
+    if(canJoin && isInHummingBird()){
+        canJoin = false;
+    }
+    if(canJoin && isInTranceHouseChill()){
+        canJoin = false;
+    }
+    return canJoin;
+}
+
+function join() {
+    if(canAutoJoin()){
+        API.djJoin();
+    }
+}
+
+function hideUI(){
+    $('#playback-container').addClass('hide-video');
+    $('#playback').addClass('hide-video');
+    $("#audience-canvas").addClass('hide-video');
+    $("#dj-canvas").addClass('hide-video');
+    $('.background').hide();
+    $('.room-background').hide();
+}
+
+function showUI(){
+    $('#playback-container').removeClass('hide-video');
+    $('#playback').removeClass('hide-video');
+    $("#audience-canvas").removeClass('hide-video');
+    $("#dj-canvas").removeClass('hide-video');
+    $('.background').show();
+    $('.room-background').show();
+}
+
+function askCurrentMehs(){
+    var media = API.getMedia();
+    var author = media.author;
+    var title = media.title;
+    var audience = API.getAudience();
+    var atLeastOneMeh = false;
+    API.chatLog(":thumbsdown: " + author + " - " + title, true);
+    for(var i = 0; i < audience.length; i++){
+        var user = audience[i];
+        if(user.vote == -1){
+            API.chatLog(user.username + " mehed");
+            atLeastOneMeh = true;
+        }
+    }
+    if(!atLeastOneMeh){
+        API.chatLog("Nobody mehed");
+    }
+}
+function askCurrentGrabs(){
+    var media = API.getMedia();
+    var author = media.author;
+    var title = media.title;
+    var audience = API.getAudience();
+    var atLeastOneGrab = false;
+    API.chatLog(":thumbsup: " + author + " - " + title, true);
+    for(var i = 0; i < audience.length; i++){
+        var user = audience[i];
+        if(user.grab){
+            API.chatLog(user.username + " grabbed");
+            atLeastOneGrab = true;
+        }
+    }
+    if(!atLeastOneGrab){
+        API.chatLog("Nobody grabbed");
+    }
+}
+
+function aboutHybris(){
+    API.chatLog(":information_source: [Features]", true);
+    API.chatLog("AutoWoot - Green: activated, Red: deactivated");
+    API.chatLog("AutoJoin - Green: activated, Red: deactivated");
+    API.chatLog("Chat sound - Green: mention, Blue: all, Red: none");
+    API.chatLog("Join/Leave notice - Green: all, Blue: moderators, Red: none");
+    API.chatLog("Hide user interface - Green: activated, Red: deactivated");
+    API.chatLog("Follow WaitList - Green: activated, Red: deactivated");
+    API.chatLog("ETA? - Get the Estimated Time Awaiting from the current position");
+    API.chatLog("Mehs? - Get the list of people who mehed the current media");
+    API.chatLog("Grabs? - Get the list of people who grabbed the current media");
+}
+
 /**
  * STATS
  */
@@ -178,71 +280,47 @@ if(!getEta){
     };
 }
 
-function askCurrentMehs(){
-    var media = API.getMedia();
-    var author = media.author;
-    var title = media.title;
-    var audience = API.getAudience();
-    var atLeastOneMeh = false;
-    API.chatLog(":thumbsdown: " + author + " - " + title, true);
-    for(var i = 0; i < audience.length; i++){
-        var user = audience[i];
-        if(user.vote == -1){
-            API.chatLog(user.username + " mehed");
-            atLeastOneMeh = true;
-        }
-    }
-    if(!atLeastOneMeh){
-        API.chatLog("Nobody mehed");
-    }
-}
-function askCurrentGrabs(){
-    var media = API.getMedia();
-    var author = media.author;
-    var title = media.title;
-    var audience = API.getAudience();
-    var atLeastOneGrab = false;
-    API.chatLog(":thumbsup: " + author + " - " + title, true);
-    for(var i = 0; i < audience.length; i++){
-        var user = audience[i];
-        if(user.grab){
-            API.chatLog(user.username + " grabbed");
-            atLeastOneGrab = true;
-        }
-    }
-    if(!atLeastOneGrab){
-        API.chatLog("Nobody grabbed");
-    }
-}
-
-function aboutHybris(){
-    API.chatLog(":information_source: [Features]", true);
-    API.chatLog("AutoWoot - Green: activated, Red: deactivated");
-    API.chatLog("AutoJoin - Green: activated, Red: deactivated");
-    API.chatLog("Chat sound - Green: mention, Blue: all, Red: none");
-    API.chatLog("Join/Leave notice - Green: all, Blue: moderators, Red: none");
-    API.chatLog("Hide user interface - Green: activated, Red: deactivated");
-    API.chatLog("Follow WaitList - Green: activated, Red: deactivated");
-    API.chatLog("ETA? - Get the Estimated Time Awaiting from the current position");
-    API.chatLog("Mehs? - Get the list of people who mehed the current media");
-    API.chatLog("Grabs? - Get the list of people who grabbed the current media");
-}
-
 /**
  * CHANGE ROOM EVENT :
+ * AutoWoot
+ * AutoJoin
+ * Update the oldWaitList
  */
-var changeRoomEventHookedOnApi;
-var changeRoomFunction;// TODO - Effectively hook this on a room change event (dispatchevent ???)
-if(!changeRoomFunction){
-    changeRoomFunction = function() {
-        oldWaitList = API.getWaitList();
-        if(settings.autoW){
-            woot();
+function changeRoomFunction() {
+    var nextExec = 500;
+    if(currentRoom != window.location.pathname){
+        if(document.getElementById('room-loader')){
+            if(debug){console.log("Changing from room : " + currentRoom + " to " + window.location.pathname);}
+            nextExec = 1000;
+        }else{
+            if(debug){console.log("Changed from room : " + currentRoom + " to " + window.location.pathname);}
+            currentRoom = window.location.pathname;
+            oldWaitList = API.getWaitList();
+            setupHybrisToolBar();
         }
-        if(settings.autoJ){
-            join();
-        }
-    };
+    }
+    window.setTimeout(changeRoomFunction, nextExec);
+}
+changeRoomFunction();
+
+/**
+ * FRIEND JOIN EVENT :
+ * AutoFriendList
+ */
+var friendJoinEventHookedOnApi;
+var friendJoinFunction;
+if(friendJoinFunction && friendJoinEventHookedOnApi){
+    API.off(API.FRIEND_JOIN, friendJoinFunction);
+    friendJoinEventHookedOnApi = false;
+}
+friendJoinFunction = function(data) {
+    if(debug){console.log("Friend joint event");console.log(data);}
+    
+    // TODO - Follow the friend list
+};
+if(!friendJoinEventHookedOnApi){
+    API.on(API.FRIEND_JOIN, friendJoinFunction);
+    friendJoinEventHookedOnApi = true;
 }
 
 /**
@@ -251,246 +329,213 @@ if(!changeRoomFunction){
  */
 var advanceEventHookedOnApi;
 var advanceFunction;
-if(!advanceFunction){
-    advanceFunction = function(data) {
-        if(debug){console.log("Advance event");console.log(data);}
-        
-        // TODO - Say here your stats if you were the last one playing
-        
-        if(settings.autoHUI){
-            hideUI();
-        }else{
-            showUI();
-        }
-        
-        if(settings.autoW){
-            woot();
-        }
-        
-        if(settings.autoJ){
-            join();
-        }
-    };
+if(advanceFunction && advanceEventHookedOnApi){
+    API.off(API.ADVANCE, advanceFunction);
+    advanceEventHookedOnApi = false;
 }
-
-function woot() {
-    $("#woot").click();
-}
-
-function canAutoJoin(){
-    var canJoin = true;
-    if(canJoin && isInChill()){
-        canJoin = false;
+advanceFunction = function(data) {
+    if(debug){console.log("Advance event");console.log(data);}
+    
+    // TODO - Say here your stats if you were the last one playing
+    
+    if(settings.autoHUI){
+        hideUI();
+    }else{
+        showUI();
     }
-    if(canJoin && isInHummingBird()){
-        canJoin = false;
+    
+    if(settings.autoW){
+        woot();
     }
-    if(canJoin && isInTranceHouseChill()){
-        canJoin = false;
+    
+    if(settings.autoJ){
+        join();
     }
-    return canJoin;
-}
-function join() {
-    if(debug){console.log("Try to autojoin");}
-    if(canAutoJoin()){
-        if(debug){console.log("Autojoins for real");}
-        API.djJoin();
-    }
-}
-
-function hideUI(){
-    $('#playback-container').addClass('hide-video');
-    $('#playback').addClass('hide-video');
-    $("#audience-canvas").addClass('hide-video');
-    $("#dj-canvas").addClass('hide-video');
-    $('.background').hide();
-    $('.room-background').hide();
-}
-function showUI(){
-    $('#playback-container').removeClass('hide-video');
-    $('#playback').removeClass('hide-video');
-    $("#audience-canvas").removeClass('hide-video');
-    $("#dj-canvas").removeClass('hide-video');
-    $('.background').show();
-    $('.room-background').show();
+};
+if(!advanceEventHookedOnApi){
+    API.on(API.ADVANCE, advanceFunction);
+    advanceEventHookedOnApi = true;
 }
 
 /**
  * JOIN EVENT :
  * AutoJoinNotice
  */
-var autoJoinLeaveHookedOnApi;
+var joinHookedOnApi;
 var someoneJoined;
-if(!someoneJoined){
-    someoneJoined = function(user){
-        if(debug){console.log("Join event");console.log(user);}
-    	if((settings.autoJoinLeaveNotice == autoJoinLeaveNotice.all) || (settings.autoJoinLeaveNotice == autoJoinLeaveNotice.moderators && user.role > 0)) {
-            API.chatLog(":on: " + user.username + " joined the room", true);
-    	}
-    };
+if(someoneJoined && joinHookedOnApi){
+    API.off(API.USER_JOIN, someoneJoined);
+    joinHookedOnApi = false;
 }
+someoneJoined = function(user){
+    if(debug){console.log("Join event");console.log(user);}
+    if((settings.autoJoinLeaveNotice == autoJoinLeaveNotice.all) || (settings.autoJoinLeaveNotice == autoJoinLeaveNotice.moderators && user.role > 0)) {
+        API.chatLog(":on: " + user.username + " joined the room", true);
+    }
+};
+if(!joinHookedOnApi){
+    API.on(API.USER_JOIN, someoneJoined);
+    joinHookedOnApi = true;
+}
+
 /**
  * LEAVE EVENT :
  * AutoLeaveNotice
  */
+var leftHookedOnApi;
 var someoneLeft;
-if(!someoneLeft){
-    someoneLeft = function(user){
-        if(debug){console.log("Leave event");console.log(user);}
-    	if((settings.autoJoinLeaveNotice == autoJoinLeaveNotice.all) || (settings.autoJoinLeaveNotice == autoJoinLeaveNotice.moderators && user.role > 0)) {
-            API.chatLog(":end: " + user.username + " left the room", false);
-    	}
-    };
+if(someoneLeft && leftHookedOnApi){
+    API.off(API.USER_LEAVE, someoneLeft);
+    leftHookedOnApi = false;
+}
+someoneLeft = function(user){
+    if(debug){console.log("Leave event");console.log(user);}
+    if((settings.autoJoinLeaveNotice == autoJoinLeaveNotice.all) || (settings.autoJoinLeaveNotice == autoJoinLeaveNotice.moderators && user.role > 0)) {
+        API.chatLog(":end: " + user.username + " left the room", false);
+    }
+};
+if(!leftHookedOnApi){
+    API.on(API.USER_LEAVE, someoneLeft);
+    leftHookedOnApi = true;
 }
 
 /**
  * WAIT LIST UPDATE EVENT :
  * AutoWaitList
+ * AutoJoin
  */
 var waitListUpdateHookedOnApi;
 var waitListUpdate;
-if(!waitListUpdate){
-    waitListUpdate = function(newWaitList){
-        if(debug){console.log("WaitListUpdate event");console.log(newWaitList);}
-        
-        // Recovers the addition in the new waitlist
-        if(settings.autoWL){
-            var currentDJ = API.getDJ();
-            if(debug){console.log("Current DJ");console.log(currentDJ);}
-            var currentHistory = API.getHistory();
-            var lastDJ = currentDJ;
-            if(currentHistory.length > 0){
-                var lastHistory = currentHistory[0];
-                lastDJ = lastHistory.user;
-                if(lastDJ.id == currentDJ.id && currentHistory.length > 1){
-                    lastHistory = currentHistory[1];
-                    lastDJ = lastHistory.user;
-                }
-            }
-            if(debug){console.log("Last DJ");console.log(lastDJ);}
-            var waitListAdd = new Array();
-            for(var i = 0; i < newWaitList.length; i++){
-                var userWaiting = newWaitList[i];
-                var isNew = true;
-                for(var j = 0; j < oldWaitList.length; j++){
-                    var userWasWaiting = oldWaitList[j];
-                    if(userWaiting.id == userWasWaiting.id){
-                        isNew = false;
-                    }
-                }
-                if(isNew){
-                    waitListAdd.push(userWaiting);
-                    if(lastDJ.id == userWaiting.id){
-                        API.chatLog(":up: " + userWaiting.username + " rejoined the waitlist");
-                    }else{
-                        API.chatLog(":new: " + userWaiting.username + " joined the waitlist");
-                    }
-                }
-            }
-            // Recovers the deletion in the new waitlist
-            var waitListDel = new Array();
-            for(var i = 0; i < oldWaitList.length; i++){
-                var userWasWaiting = oldWaitList[i];
-                var hasLeft = true;
-                for(var j = 0; j < newWaitList.length; j++){
-                    var userWaiting = newWaitList[j];
-                    if(userWaiting.id == userWasWaiting.id){
-                        hasLeft = false;
-                    }
-                }
-                if(hasLeft){
-                    waitListDel.push(userWasWaiting);
-                    if(currentDJ.id != userWasWaiting.id){
-                        API.chatLog(":free: " + userWasWaiting.username + " left the waitlist");
-                    }else{
-                        API.chatLog(":cool: " + userWasWaiting.username + " left the waitlist to become a DJ");
-                    }
-                }
-            }
-            if(debug){console.log(waitListAdd);console.log(waitListDel);}
-        }
-        oldWaitList = newWaitList;
-        
-        if(settings.autoJ){
-            join();
-        }
-    };
+if(waitListUpdate && waitListUpdateHookedOnApi){
+    API.off(API.WAIT_LIST_UPDATE, waitListUpdate);
+    waitListUpdateHookedOnApi = false;
 }
+waitListUpdate = function(newWaitList){
+    if(debug){console.log("WaitListUpdate event");console.log(newWaitList);}
+    
+    // Recovers the addition in the new waitlist
+    if(settings.autoWL){
+        var currentDJ = API.getDJ();
+        var currentHistory = API.getHistory();
+        var lastDJ = currentDJ;
+        if(currentHistory.length > 0){
+            var lastHistory = currentHistory[0];
+            lastDJ = lastHistory.user;
+            if(lastDJ.id == currentDJ.id && currentHistory.length > 1){
+                lastHistory = currentHistory[1];
+                lastDJ = lastHistory.user;
+            }
+        }
+        var waitListAdd = new Array();
+        for(var i = 0; i < newWaitList.length; i++){
+            var userWaiting = newWaitList[i];
+            var isNew = true;
+            for(var j = 0; j < oldWaitList.length; j++){
+                var userWasWaiting = oldWaitList[j];
+                if(userWaiting.id == userWasWaiting.id){
+                    isNew = false;
+                }
+            }
+            if(isNew){
+                waitListAdd.push(userWaiting);
+                if(lastDJ.id == userWaiting.id){
+                    API.chatLog(":up: " + userWaiting.username + " rejoined the waitlist");
+                }else{
+                    API.chatLog(":new: " + userWaiting.username + " joined the waitlist");
+                }
+            }
+        }
+        // Recovers the deletion in the new waitlist
+        var waitListDel = new Array();
+        for(var i = 0; i < oldWaitList.length; i++){
+            var userWasWaiting = oldWaitList[i];
+            var hasLeft = true;
+            for(var j = 0; j < newWaitList.length; j++){
+                var userWaiting = newWaitList[j];
+                if(userWaiting.id == userWasWaiting.id){
+                    hasLeft = false;
+                }
+            }
+            if(hasLeft){
+                waitListDel.push(userWasWaiting);
+                if(currentDJ.id != userWasWaiting.id){
+                    API.chatLog(":free: " + userWasWaiting.username + " left the waitlist");
+                }else{
+                    API.chatLog(":cool: " + userWasWaiting.username + " left the waitlist to become a DJ");
+                }
+            }
+        }
+    }
+    oldWaitList = newWaitList;
+    
+    if(settings.autoJ){
+        join();
+    }
+};
+if(!waitListUpdateHookedOnApi){
+    API.on(API.WAIT_LIST_UPDATE, waitListUpdate);
+    waitListUpdateHookedOnApi = true;
+}
+
 /**
  * CHAT EVENT :
  * AutoNotice Only -> http://pastebin.com/Hsi2YMDH
  */
 var chatEventHookedOnApi;
 var analyseChat;
-if(!analyseChat){
-    analyseChat = function(chat){
-        if(debug){console.log("Chat event");console.log(chat);}
-        var message = chat.message;
-        var username = chat.un;
-        var type = chat.type;
-        var uid = chat.uid;
-        var cid = chat.cid;
-        var timestamp = chat.timestamp;
-        
-        // Recover the latest timestamp for the user
-        if(username == ownUserName){
-            lastTimeStamp = timestamp;
-        }
-        
-        // Watch chat sent by other users
-        if(username != ownUserName){
-            if(type.startsWith("message")){
-                // AutoNotice (on every chat message)
-                if(settings.autoNotice == autoNotice.onChat){
-                    loadedSound.play();
-                }
-            }
-            else if(type.startsWith("mention")){
-                // AutoNotice (on mention message)
-                if(settings.autoNotice == autoNotice.onMention || settings.autoNotice == autoNotice.onChat){
-                    loadedSound.play();
-                }
-            }
-            else if(type.startsWith("emote")){
-                // AutoNotice (on mention message)
-                if(settings.autoNotice == autoNotice.onMention){
-                    if(message.match("@" + ownUserName)){
-                        loadedSound.play();
-                    }
-                }
-                else if(settings.autoNotice == autoNotice.onChat){
-                    loadedSound.play();
-                }
-            }
-        }
-    };
+if(analyseChat && chatEventHookedOnApi){
+    API.off(API.CHAT, analyseChat);
+    chatEventHookedOnApi = false;
 }
+analyseChat = function(chat){
+    if(debug){console.log("Chat event");console.log(chat);}
+    var message = chat.message;
+    var username = chat.un;
+    var type = chat.type;
+    var uid = chat.uid;
+    var cid = chat.cid;
+    var timestamp = chat.timestamp;
+    
+    // Recover the latest timestamp for the user
+    if(username == ownUserName){
+        lastTimeStamp = timestamp;
+    }
+    
+    // Watch chat sent by other users
+    if(username != ownUserName){
+        if(type.startsWith("message")){
+            // AutoNotice (on every chat message)
+            if(settings.autoNotice == autoNotice.onChat){
+                loadedSound.play();
+            }
+        }
+        else if(type.startsWith("mention")){
+            // AutoNotice (on mention message)
+            if(settings.autoNotice == autoNotice.onMention || settings.autoNotice == autoNotice.onChat){
+                loadedSound.play();
+            }
+        }
+        else if(type.startsWith("emote")){
+            // AutoNotice (on mention message)
+            if(settings.autoNotice == autoNotice.onMention){
+                if(message.match("@" + ownUserName)){
+                    loadedSound.play();
+                }
+            }
+            else if(settings.autoNotice == autoNotice.onChat){
+                loadedSound.play();
+            }
+        }
+    }
+};
+if(!chatEventHookedOnApi){
+    API.on(API.CHAT, analyseChat);
+    chatEventHookedOnApi = true;
+}
+
 /**
- * Event Management
+ * Toggle/Cycle Functions
  */
-function refreshAPIStatus()
-{
-    if(!advanceEventHookedOnApi){
-        API.on(API.ADVANCE, advanceFunction);
-        advanceEventHookedOnApi = true;
-    }
-    
-    if(!chatEventHookedOnApi){
-        API.on(API.CHAT, analyseChat);
-        chatEventHookedOnApi = true;
-    }
-    
-    if(!autoJoinLeaveHookedOnApi){
-        API.on(API.USER_JOIN, someoneJoined);
-        API.on(API.USER_LEAVE, someoneLeft);
-        autoJoinLeaveHookedOnApi = true;
-    }
-    
-    if(!waitListUpdateHookedOnApi){
-        API.on(API.WAIT_LIST_UPDATE, waitListUpdate);
-        waitListUpdateHookedOnApi = true;
-    }
-}
 function startAutoWoot(){
     settings.autoW = true;
     woot();
@@ -610,6 +655,7 @@ function switchAutoJoin(){
     }
     saveSettings();
 }
+
 /**
  * UI Management
  */
@@ -737,6 +783,74 @@ if(!buttonMarginRight){
     buttonMarginRight = parseInt(str);
 }
 var buttonWidth = $(".chat-header-button").width();
+function loadToggleModes(){
+    if(settings.changedAutoW){
+        if(settings.autoW){
+            startAutoWoot();
+        }else{
+            stopAutoWoot();
+        }
+    }else{
+        stopAutoWoot();
+    }
+    
+    if(settings.changedAutoJ){
+        if(settings.autoJ){
+            startAutoJoin();
+        }else{
+            stopAutoJoin();
+        }
+    }else{
+        stopAutoJoin();
+    }
+    
+    if(settings.changedAutoNotice){
+        if(settings.autoNotice == autoNotice.onMention){
+            startAutoNotice();
+        }else if(settings.autoNotice == autoNotice.onChat){
+            autoNoticeOnChat();
+        }else{
+            stopAutoNotice();
+        }
+    }else{
+        stopAutoNotice();
+    }
+    
+    if(settings.changedAutoJoinLeaveNotice){
+        if(settings.autoJoinLeaveNotice == autoJoinLeaveNotice.all){
+            startAutoNoticeJoinersLeavers();
+        }else if(settings.autoJoinLeaveNotice == autoJoinLeaveNotice.moderators){
+            filterAutoNoticeJoinersLeavers();
+        }else{
+            stopAutoNoticeJoinersLeavers();
+        }
+    }else{
+        stopAutoNoticeJoinersLeavers();
+    }
+    
+    if(settings.changedAutoHUI){
+        if(settings.autoHUI){
+            startAutoHUI();
+        }else{
+            stopAutoHUI();
+        }
+    }else{
+        stopAutoHUI();
+    }
+    
+    if(settings.changedAutoWL){
+        if(settings.autoWL){
+            startAutoWL();
+        }else{
+            stopAutoWL();
+        }
+    }else{
+        stopAutoWL();
+    }
+    
+    // Saves in a JSON file all the settings
+    saveSettings();
+}
 function setupHybrisToolBar(){
     var hybrisHeader = $("#hybrisHeader");
     if(hybrisHeader.length > 0){// Reload
@@ -844,74 +958,7 @@ function setupHybrisToolBar(){
         $("#hybrisHeader").css("width", (toggleHybrisBar.width() + toggleSideBorder) + "px");
     }
     hybrisHeader.slideDown();
-}
-function loadToggleModes(){
-    if(settings.changedAutoW){
-        if(settings.autoW){
-            startAutoWoot();
-        }else{
-            stopAutoWoot();
-        }
-    }else{
-        stopAutoWoot();
-    }
-    
-    if(settings.changedAutoJ){
-        if(settings.autoJ){
-            startAutoJoin();
-        }else{
-            stopAutoJoin();
-        }
-    }else{
-        stopAutoJoin();
-    }
-    
-    if(settings.changedAutoNotice){
-        if(settings.autoNotice == autoNotice.onMention){
-            startAutoNotice();
-        }else if(settings.autoNotice == autoNotice.onChat){
-            autoNoticeOnChat();
-        }else{
-            stopAutoNotice();
-        }
-    }else{
-        stopAutoNotice();
-    }
-    
-    if(settings.changedAutoJoinLeaveNotice){
-        if(settings.autoJoinLeaveNotice == autoJoinLeaveNotice.all){
-            startAutoNoticeJoinersLeavers();
-        }else if(settings.autoJoinLeaveNotice == autoJoinLeaveNotice.moderators){
-            filterAutoNoticeJoinersLeavers();
-        }else{
-            stopAutoNoticeJoinersLeavers();
-        }
-    }else{
-        stopAutoNoticeJoinersLeavers();
-    }
-    
-    if(settings.changedAutoHUI){
-        if(settings.autoHUI){
-            startAutoHUI();
-        }else{
-            stopAutoHUI();
-        }
-    }else{
-        stopAutoHUI();
-    }
-    
-    if(settings.changedAutoWL){
-        if(settings.autoWL){
-            startAutoWL();
-        }else{
-            stopAutoWL();
-        }
-    }else{
-        stopAutoWL();
-    }
-    
-    // Saves in a JSON file all the settings
-    saveSettings();
+    loadToggleModes();
 }
 /**
  * Main function (executed at loading)
@@ -919,7 +966,5 @@ function loadToggleModes(){
 function main(){
     loadSettings();
     setupHybrisToolBar();
-    refreshAPIStatus();
-    loadToggleModes();
 }
-$(document).ready(main);// TODO - Reload the script if you change room (refresh UI)
+$(document).ready(main);
