@@ -330,7 +330,9 @@ if(grabFunction && grabEventHookedOnApi){
 grabFunction = function(data){
     if(debug){console.log("Grab event");console.log(data);}
     
-    grabsList.push(data.user.username);
+    var grabUserName = data.user.username;
+    grabsList.pop(grabUserName);
+    grabsList.push(grabUserName);
 };
 if(!grabEventHookedOnApi){
     API.on(API.GRAB_UPDATE, grabFunction);
@@ -352,17 +354,13 @@ voteFunction = function(data){
     if(debug){console.log("Vote event");console.log(data);}
     
     var voteUserName = data.user.username;
+    upVoteList.pop(voteUserName);
+    downVoteList.pop(voteUserName);
     if(data.vote == 1){
         upVoteList.push(voteUserName);
-        downVoteList.pop(voteUserName);
     }
     else if(data.vote == -1){
-        upVoteList.pop(voteUserName);
         downVoteList.push(voteUserName);
-    }
-    else{
-        upVoteList.pop(voteUserName);
-        downVoteList.pop(voteUserName);
     }
 };
 if(!voteEventHookedOnApi){
