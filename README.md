@@ -29,10 +29,10 @@ Features
 * Joiners/Leavers notification (Toggle Button) - Green = Everyone, Blue = Moderators Only
 * AutoHide the User Interface (Toggle Button)
 * WaitList changes notification (Toggle Button)
-* AutoSongStat (Toggle Button) this tells you your stats (grabs/mehs) after you played
+* AutoSongStat (Toggle Button) this tells you your stats (grabs/mehs) after someone (or only you) played
 * Get the Estimated Time Awaited (from current position or globally if not joined)
-* Get the names of people who Mehed the current song
 * Get the names of people who Grabbed the current song
+* Get the names of people who Mehed the current song
 
 How to use
 ----------
