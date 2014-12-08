@@ -43,6 +43,7 @@ if(!loadedSound){
 var currentRoom = window.location.pathname;
 
 var oldWaitList;
+var oldMedia;
 var upVoteList;
 var downVoteList;
 var grabsList;
@@ -92,6 +93,11 @@ var autoJoinLeaveNotice = {
     all: 1,
     moderators: 2
 };
+var autoSongStat = {
+    disabled: false,
+    all: 1,
+    self: 2
+};
 var settings = {
     changedAutoW: false,
     autoW: false,
@@ -112,7 +118,7 @@ var settings = {
     autoWL: false,
     
     changedAutoSStat: false,
-    autoSongStat: false,
+    autoSongStat: autoSongStat.disabled,
     
     showToolbar: true
 };
@@ -180,7 +186,7 @@ function showUI(){
 }
 
 function askCurrentMehs(){
-    var media = API.getMedia();
+    var media = oldMedia;
     var author = media.author;
     var title = media.title;
     API.chatLog(":thumbsdown: " + author + " - " + title, true);
@@ -190,7 +196,7 @@ function askCurrentMehs(){
     }
 }
 function askCurrentGrabs(){
-    var media = API.getMedia();
+    var media = oldMedia;
     var author = media.author;
     var title = media.title;
     API.chatLog(":thumbsup: " + author + " - " + title, true);
@@ -208,10 +214,10 @@ function aboutHybris(){
     API.chatLog("Join/Leave notice - Green: all, Blue: moderators, Red: none");
     API.chatLog("Hide user interface - Green: activated, Red: deactivated");
     API.chatLog("Follow WaitList - Green: activated, Red: deactivated");
-    API.chatLog("My Song Stat - Green: activated, Red: deactivated");
+    API.chatLog("Follow Song Stat - Green: all, Blue: self, Red: deactivated");
     API.chatLog("ETA? - Get the Estimated Time Awaiting from the current position");
-    API.chatLog("Mehs? - Get the list of people who mehed the current media");
     API.chatLog("Grabs? - Get the list of people who grabbed the current media");
+    API.chatLog("Mehs? - Get the list of people who mehed the current media");
 }
 
 /**
@@ -278,6 +284,7 @@ if(!getEta){
  * AutoWoot
  * AutoJoin
  * Update the oldWaitList
+ * Update the oldMedia
  */
 function changeRoomFunction() {
     var nextExec = 500;
@@ -376,6 +383,7 @@ if(!voteEventHookedOnApi){
 
 function initLists(){
     oldWaitList = API.getWaitList();
+    oldMedia = API.getMedia();
     upVoteList = new Array();
     downVoteList = new Array();
     grabsList = new Array();
@@ -409,15 +417,20 @@ if(advanceFunction && advanceEventHookedOnApi){
 advanceFunction = function(data) {
     if(debug){console.log("Advance event");console.log(data);}
     
-    if(settings.autoSongStat){
+    if(settings.autoSongStat == autoSongStat.self){
         if(data.lastPlay.dj.username == ownUserName){
             askCurrentGrabs();
             askCurrentMehs();
         }
     }
+    if(settings.autoSongStat == autoSongStat.all){
+        askCurrentGrabs();
+        askCurrentMehs();
+    }
     upVoteList = new Array();
     downVoteList = new Array();
     grabsList = new Array();
+    oldMedia = API.getMedia();
     
     if(settings.autoHUI){
         hideUI();
@@ -737,17 +750,23 @@ function switchAutoWaitList(){
     saveSettings();
 }
 function startAutoSStat(){
-    settings.autoSongStat = true;
+    settings.autoSongStat = autoSongStat.all;
     $("#hybrisSongStat").css("background-color", "#105D2F");
 }
+function filterAutoSStat(){
+    settings.autoSongStat = autoSongStat.self;
+    $("#hybrisSongStat").css("background-color", "#102F5D");
+}
 function stopAutoSStat(){
-    settings.autoSongStat = false;
+    settings.autoSongStat = autoSongStat.disabled;
     $("#hybrisSongStat").css("background-color", "#5D102F");
 }
 function switchAutoSongStat(){
     settings.changedAutoSStat = true;
     if(!settings.autoSongStat){
         startAutoSStat();
+    }else if(settings.autoSongStat == autoSongStat.all){
+        filterAutoSStat();
     }else{
         stopAutoSStat();
     }
@@ -931,7 +950,13 @@ function loadToggleModes(){
     }
     
     if(settings.changedAutoSStat && settings.autoSongStat){
-        startAutoSStat();
+        if(settings.autoSongStat == autoSongStat.all){
+            startAutoSStat();
+        }else if(settings.autoSongStat == autoSongStat.self){
+            filterAutoSStat();
+        }else{
+            startAutoSStat();
+        }
     }else{
         stopAutoSStat();
     }
@@ -978,10 +1003,10 @@ function setupHybrisToolBar(){
     setupButton("hybrisJoiners", "icon-ignore", switchAutoNoticeJoinersLeavers, "Joiners/Leavers notification");
     setupButton("hybrisUIToggle", "icon-logout-white", switchAutoHUI, "Hide User Interface");
     setupButton("hybrisWaitList", "icon-waitlist", switchAutoWaitList, "Follow WaitList");
-    setupButton("hybrisSongStat", "icon-current-dj", switchAutoSongStat, "My Song Stat");
+    setupButton("hybrisSongStat", "icon-current-dj", switchAutoSongStat, "Follow Song Stat");
     setupButton("hybrisEta", "icon-history-white", getEta, "ETA?");
-    setupButton("hybrisMehBtn", "icon-meh", askCurrentMehs, "Mehs?");
     setupButton("hybrisGrabBtn", "icon-grab", askCurrentGrabs, "Grabs?");
+    setupButton("hybrisMehBtn", "icon-meh", askCurrentMehs, "Mehs?");
     setupButton("hybrisAbout", "icon-ep-small", aboutHybris, "Help");
     hybrisHeader.css("height", hybrisHeaderHeight + "px");
     
