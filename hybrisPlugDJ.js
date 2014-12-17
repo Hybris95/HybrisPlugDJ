@@ -979,10 +979,11 @@ function setupHybrisToolBar(){
     }
     hybrisHeader.hide();
     hybrisHeader.css("position", "absolute");
-    var djbuttonTopString = $("#dj-button").css("top");
+    /*var djbuttonTopString = $("#dj-button").css("top");
     djbuttonTopString = djbuttonTopString.substring(0, djbuttonTopString.length - 2);
     var djbuttonTopInt = parseInt(djbuttonTopString);
-    hybrisHeader.css("top", (djbuttonTopInt - 50) + "px");
+    hybrisHeader.css("top", (djbuttonTopInt - 50) + "px");*/
+	hybrisHeader.css("bottom", "150px");
     hybrisHeader.css("z-index", 9);
     hybrisHeader.css("background-color", "#282C35");
     hybrisHeader.css("padding-left", hybrisHeaderLeftPadding + "px");
