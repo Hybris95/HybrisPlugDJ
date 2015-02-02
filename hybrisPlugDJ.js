@@ -516,7 +516,7 @@ waitListUpdate = function(newWaitList){
         if(currentHistory.length > 0){
             var lastHistory = currentHistory[0];
             lastDJ = lastHistory.user;
-            if(lastDJ.id == currentDJ.id && currentHistory.length > 1){
+            if(currentHistory.length > 1 && currentDJ != undefined && lastDJ.id == currentDJ.id){
                 lastHistory = currentHistory[1];
                 lastDJ = lastHistory.user;
             }
@@ -533,7 +533,7 @@ waitListUpdate = function(newWaitList){
             }
             if(isNew){
                 waitListAdd.push(userWaiting);
-                if(lastDJ.id == userWaiting.id){
+                if(lastDJ != undefined && lastDJ.id == userWaiting.id){
                     API.chatLog(":up: " + userWaiting.username + " rejoined the waitlist");
                 }else{
                     API.chatLog(":new: " + userWaiting.username + " joined the waitlist");
@@ -553,10 +553,10 @@ waitListUpdate = function(newWaitList){
             }
             if(hasLeft){
                 waitListDel.push(userWasWaiting);
-                if(currentDJ.id != userWasWaiting.id){
-                    API.chatLog(":free: " + userWasWaiting.username + " left the waitlist");
-                }else{
+                if(currentDJ != undefined && currentDJ.id == userWasWaiting.id){
                     API.chatLog(":cool: " + userWasWaiting.username + " left the waitlist to become a DJ");
+                }else{
+                    API.chatLog(":free: " + userWasWaiting.username + " left the waitlist");
                 }
             }
         }
