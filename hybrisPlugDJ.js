@@ -417,33 +417,34 @@ if(advanceFunction && advanceEventHookedOnApi){
 advanceFunction = function(data) {
     if(debug){console.log("Advance event");console.log(data);}
     
-    if(settings.autoSongStat == autoSongStat.self){
-        if(data.lastPlay.dj.username == ownUserName){
+    if(data.lastPlay != undefined)// Just finished playing
+    {
+        var lastPlay = data.lastPlay;
+        if((settings.autoSongStat == autoSongStat.self && lastPlay.dj.username == ownUserName) || settings.autoSongStat == autoSongStat.all){
             askCurrentGrabs();
             askCurrentMehs();
         }
+        
+        if(settings.autoJ){
+            join();
+        }
     }
-    if(settings.autoSongStat == autoSongStat.all){
-        askCurrentGrabs();
-        askCurrentMehs();
-    }
-    upVoteList = new Array();
-    downVoteList = new Array();
-    grabsList = new Array();
-    oldMedia = API.getMedia();
-    
-    if(settings.autoHUI){
-        hideUI();
-    }else{
-        showUI();
-    }
-    
-    if(settings.autoW){
-        woot();
-    }
-    
-    if(settings.autoJ){
-        join();
+    else// Just started a new play
+    {
+        upVoteList = new Array();
+        downVoteList = new Array();
+        grabsList = new Array();
+        oldMedia = API.getMedia();
+        
+        if(settings.autoHUI){
+            hideUI();
+        }else{
+            showUI();
+        }
+        
+        if(settings.autoW){
+            woot();
+        }
     }
 };
 if(!advanceEventHookedOnApi){
