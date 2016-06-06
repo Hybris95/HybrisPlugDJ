@@ -11,7 +11,6 @@
 // @author          Christian "Hybris95" BUISSON
 // @version         1.0
 // ==/UserScript==
-
 /* GNU GPLv3 Licensing :
 Christian BUISSON French Developper contact by electronic mail: hybris_95@hotmail.com
 Copyright © 2014 Christian BUISSON
@@ -29,23 +28,44 @@ Copyright © 2014 Christian BUISSON
     along with this program; if not, write to the Free Software Foundation,
     Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 */
-
-(function(){
-    var init = function(){
-        if (!document.getElementById('room-loader')) {
-            setTimeout(init,200);
-        } else {
-            loader();
-        }
-    },
-    loader = function(){
-        if (document.getElementById('room-loader')) {
-            setTimeout(loader,200);
-        } else {
-            var script = document.createElement('script');
-            script.textContent = "$.getScript('https://rawgit.com/Hybris95/HybrisPlugDJ/master/hybrisPlugDJ.js');";
-            document.head.appendChild(script);
-        }
-    };
-    init();
-})();
+window.log = function () {
+  log.history = log.history || []; // store logs to an array for reference
+  log.history.push(arguments);
+  if (this.console) {
+    console.log(Array.prototype.slice.call(arguments));
+  }
+};
+var loaded = false;
+var trys = 0;
+var timeout = 20;
+var retryspeed = 200;
+(function () {
+  var init = function () {
+    if (!loaded && trys < (timeout * 1000 / retryspeed))
+    {
+      window.log('HybrisPlugDJ waiting for loading-box...');
+      if (document.getElementsByClassName('loading-box').length == 0) {
+        setTimeout(init, retryspeed);
+        trys++;
+      } else {
+        loader();
+      }
+    }
+  },
+  loader = function () {
+    if (!loaded && trys < (timeout * 1000 / retryspeed))
+    {
+      window.log('HybrisPlugDJ loading!');
+      if (document.getElementsByClassName('loading-box').length > 0) {
+        setTimeout(loader, retryspeed);
+      } else {
+        var script = document.createElement('script');
+        script.textContent = '$.getScript(\'https://rawgit.com/Hybris95/HybrisPlugDJ/master/hybrisPlugDJ.js\');';
+        document.head.appendChild(script);
+        window.log('HybrisPlugDJ loaded!');
+        loaded = true;
+      }
+    }
+  };
+  init();
+}) ();
