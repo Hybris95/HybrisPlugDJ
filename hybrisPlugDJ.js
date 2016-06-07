@@ -429,22 +429,20 @@ advanceFunction = function(data) {
             join();
         }
     }
-    else// Just started a new play
-    {
-        upVoteList = new Array();
-        downVoteList = new Array();
-        grabsList = new Array();
-        oldMedia = API.getMedia();
-        
-        if(settings.autoHUI){
-            hideUI();
-        }else{
-            showUI();
-        }
-        
-        if(settings.autoW){
-            woot();
-        }
+    
+    upVoteList = new Array();
+    downVoteList = new Array();
+    grabsList = new Array();
+    oldMedia = API.getMedia();
+    
+    if(settings.autoHUI){
+        hideUI();
+    }else{
+        showUI();
+    }
+    
+    if(settings.autoW){
+        woot();
     }
 };
 if(!advanceEventHookedOnApi){
