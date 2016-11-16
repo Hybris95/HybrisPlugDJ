@@ -463,7 +463,7 @@ if(someoneJoined && joinHookedOnApi){
 someoneJoined = function(user){
     if(debug){console.log("Join event");console.log(user);}
     if((settings.autoJoinLeaveNotice == autoJoinLeaveNotice.all) || (settings.autoJoinLeaveNotice == autoJoinLeaveNotice.moderators && user.role > 0)) {
-        API.chatLog(":on: " + user.username + " joined the room", true);
+        API.chatLog(new Date().toLocaleTimeString() + ": :on: " + user.username + " joined the room", true);
     }
 };
 if(!joinHookedOnApi){
@@ -484,7 +484,7 @@ if(someoneLeft && leftHookedOnApi){
 someoneLeft = function(user){
     if(debug){console.log("Leave event");console.log(user);}
     if((settings.autoJoinLeaveNotice == autoJoinLeaveNotice.all) || (settings.autoJoinLeaveNotice == autoJoinLeaveNotice.moderators && user.role > 0)) {
-        API.chatLog(":end: " + user.username + " left the room", false);
+        API.chatLog(new Date().toLocaleTimeString() + ": :end: " + user.username + " left the room", false);
     }
 };
 if(!leftHookedOnApi){
